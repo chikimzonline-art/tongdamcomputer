@@ -134,7 +134,7 @@ export default async function HomePage() {
       {/* ============== HERO ============== */}
       <section
         aria-labelledby="hero-heading"
-        className="relative overflow-hidden border-b border-stone-200 bg-[#f6f3ec]"
+        className="relative overflow-hidden border-b border-stone-200 bg-[#f6f3ec] lg:flex lg:min-h-[calc(100svh-4rem)] lg:flex-col lg:justify-center"
       >
         {/* Subtle grid pattern */}
         <div
@@ -151,7 +151,7 @@ export default async function HomePage() {
           }}
         />
 
-        <div className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:py-20">
+        <div className="relative mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:py-10">
           <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-12 lg:gap-12">
             {/* Left column: heading + buttons + mini stats */}
             <div className="lg:col-span-7">
