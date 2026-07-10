@@ -1,0 +1,105 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================================
+// AUTHENTICATION
+// ============================================================
+
+model AdminUser {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String
+  passwordHash String
+  role         String   @default("ADMIN")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+// ============================================================
+// CMS - Site-wide content management
+// ============================================================
+
+model SiteContent {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String
+  category  String   @default("general")
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+}
+
+model AlertBanner {
+  id        String   @id @default(cuid())
+  message   String
+  isActive  Boolean  @default(true)
+  link      String?
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+}
+
+// ============================================================
+// COURSES (Education institutes)
+// ============================================================
+
+model Course {
+  id          String   @id @default(cuid())
+  code        String   @unique
+  title       String
+  institute   String
+  description String
+  duration    String
+  fee         String
+  syllabus    String?
+  sortOrder   Int      @default(0)
+  isActive    Boolean  @default(true)
+  updatedAt   DateTime @updatedAt
+  createdAt   DateTime @default(now())
+}
+
+// ============================================================
+// RESTAURANT MENU
+// ============================================================
+
+model MenuItem {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  price       String
+  category    String
+  isVeg       Boolean  @default(true)
+  isAvailable Boolean  @default(true)
+  sortOrder   Int      @default(0)
+  updatedAt   DateTime @updatedAt
+  createdAt   DateTime @default(now())
+}
+
+// ============================================================
+// LEADS - Forms submitted from public site
+// ============================================================
+
+model Lead {
+  id        String   @id @default(cuid())
+  name      String
+  email     String?
+  phone     String
+  source    String
+  subject   String
+  message   String
+  status    String   @default("NEW")
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([source])
+  @@index([status])
+  @@index([createdAt])
+}

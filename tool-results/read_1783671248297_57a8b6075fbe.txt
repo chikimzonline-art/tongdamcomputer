@@ -1,0 +1,221 @@
+     1→     1→# Tongdam Computers - Worklog
+     2→     2→
+     3→     3→---
+     4→     4→Task ID: 1
+     5→     5→Agent: Main (Orchestrator)
+     6→     6→Task: Foundation - Prisma schema, NextAuth, middleware, seed data, shared libs
+     7→     7→
+     8→     8→Work Log:
+     9→     9→- Defined Prisma schema with models: AdminUser, SiteContent, AlertBanner, Course, MenuItem, Lead
+    10→    10→- Ran `bun run db:push` - database in sync
+    11→    11→- Created `src/lib/auth-crypto.ts` - scrypt-based password hashing (no external deps)
+    12→    12→- Created `src/lib/auth.ts` - NextAuth v4 config with CredentialsProvider, JWT strategy, custom callbacks
+    13→    13→- Created `src/middleware.ts` - protects `/admin/dashboard/:path*` routes
+    14→    14→- Created `src/app/api/auth/[...nextauth]/route.ts` - NextAuth handler
+    15→    15→- Created `src/lib/data.ts` - shared data-fetching helpers (content map, courses, menu, leads, stats)
+    16→    16→- Created public API: `POST /api/leads` - accepts lead submissions from any form
+    17→    17→- Created admin APIs (all require auth): `/api/admin/content`, `/api/admin/banner`, `/api/admin/courses`, `/api/admin/menu`, `/api/admin/leads`
+    18→    18→- Wrote `prisma/seed.ts` with admin user, alert banner, 12 site content entries, 8 courses (DCA, ADCA, Tally, Web Dev, Tailoring Basic+Adv, Hotel Mgmt Diploma, Mobile Repair), 14 restaurant menu items
+    19→    19→- Ran seed successfully
+    20→    20→
+    21→    21→Stage Summary:
+    22→    22→- Admin credentials: admin@tongdam.com / tongdam123
+    23→    23→- Database fully populated with seed data
+    24→    24→- Auth + middleware + APIs ready for pages to consume
+    25→    25→- Shared data helpers in `src/lib/data.ts` for SSR pages
+    26→    26→- Public lead submission endpoint at `POST /api/leads`
+    27→    27→- All admin APIs under `/api/admin/*` return 401 without session
+    28→    28→
+    29→    29→Key files produced:
+    30→    30→- prisma/schema.prisma, prisma/seed.ts
+    31→    31→- src/lib/auth.ts, src/lib/auth-crypto.ts, src/lib/data.ts
+    32→    32→- src/middleware.ts
+    33→    33→- src/app/api/auth/[...nextauth]/route.ts
+    34→    34→- src/app/api/leads/route.ts
+    35→    35→- src/app/api/admin/{content,banner,courses,menu,leads}/route.ts
+    36→    36→
+    37→    37→---
+    38→    38→Task ID: 2-a
+    39→    39→Agent: full-stack-developer (Layout + Home)
+    40→    40→Task: Build the global public layout (AlertBanner + sticky Header + Footer) and the Home page; set up the (public) route group and root layout wiring (NextAuth SessionProvider + sonner Toaster + Tongdam metadata).
+    41→    41→
+    42→    42→Work Log:
+    43→    43→- Read worklog + foundation files (data.ts, schema, seed, ui components) to align with shared design system (emerald primary, amber accent, no blue/indigo)
+    44→    44→- Created `src/components/providers/session-provider.tsx` — 'use client' wrapper around next-auth/react SessionProvider
+    45→    45→- Rewrote `src/app/layout.tsx` — Geist fonts, SessionProviderWrapper, sonner Toaster, full Tongdam metadata (title template, description, keywords covering computer training / Aadhaar / CSP / tailoring / hotel management / restaurant / Manipur, OG/Twitter, icons.icon=/logo.svg)
+    46→    46→- Created `src/components/site/alert-banner.tsx` (server component — fetches active banner via getActiveBanner) + `src/components/site/alert-banner-client.tsx` (uses useSyncExternalStore to read a per-message localStorage dismissed flag, dismiss button dispatches a synthetic storage event so the snapshot re-reads)
+    47→    47→- Created `src/components/site/header.tsx` — sticky top-0 z-50 with backdrop blur; emerald Cpu logo wordmark; desktop nav uses shadcn DropdownMenu for Services / Education / Lifestyle groups (each item with icon + description); direct About/Contact links; amber Enroll Now CTA; mobile hamburger opens shadcn Sheet with stacked grouped nav + Enroll CTA
+    48→    48→- Created `src/components/site/footer.tsx` — dark emerald-950 background, 4 columns (brand + E-Max affiliation badge, quick links, contact from CMS with Phone/Mail/MapPin icons + tel:/mailto: links, departments list with icons); bottom bar with copyright + founder + a low-contrast link to /admin/login disguised as the © year text
+    49→    49→- Created `src/app/(public)/layout.tsx` — flex min-h-screen flex-col wrapper rendering AlertBanner → SiteHeader → main.flex-1 → SiteFooter (sticky-footer pattern)
+    50→    50→- Deleted old `src/app/page.tsx` and created `src/app/(public)/page.tsx` (async server component) — Hero (emerald gradient + grid pattern + glow accents + badge + dual CTA + affiliation strip), Stats bar (4 quick stats), Departments grid (6 cards w/ hover lift, id="departments"), Quick actions (3 cards: Book a Table / Enroll / Aadhaar-PAN), Story snippet (2-col: brand story + founder chip + Read-our-story CTA + growth timeline card with Top 1 E-Max badge), CTA band (emerald gradient + call/contact CTAs + email/address strip). All text pulled from getSiteContentMap (hero.title, hero.subtitle, about.story, about.founder, about.foundedYear, contact.*, training.emaxBadge, training.topRank)
+    51→    51→- Ran `bun run lint` — initially 1 error (react-hooks/set-state-in-effect in alert-banner-client); refactored to useSyncExternalStore; lint now passes clean (exit 0)
+    52→    52→- Verified via dev.log: GET / returns 200, Prisma queries for AlertBanner + SiteContent execute correctly on every render, /api/auth/session responds for the SessionProvider
+    53→    53→
+    54→    54→Stage Summary:
+    55→    55→- Public site shell is live at `/` with cohesive emerald/amber design system
+    56→    56→- Sticky header with working dropdowns + mobile sheet nav
+    57→    57→- Alert banner dismissible with localStorage persistence (per-message)
+    58→    58→- Footer naturally sticks to viewport bottom on short pages, pushes down on overflow
+    59→    59→- Hidden /admin/login link embedded in footer copyright (staff-discoverable, not obvious)
+    60→    60→- Home page renders 6 sections, all content CMS-driven so admin edits flow through
+    61→    61→- Lint passes clean; dev server returns 200 on `/`
+    62→    62→
+    63→    63→Files created:
+    64→    64→- src/components/providers/session-provider.tsx
+    65→    65→- src/components/site/alert-banner.tsx
+    66→    66→- src/components/site/alert-banner-client.tsx
+    67→    67→- src/components/site/header.tsx
+    68→    68→- src/components/site/footer.tsx
+    69→    69→- src/app/(public)/layout.tsx
+    70→    70→- src/app/(public)/page.tsx
+    71→    71→
+    72→    72→Files modified:
+    73→    73→- src/app/layout.tsx (metadata + SessionProvider + sonner Toaster)
+    74→    74→
+    75→    75→Files deleted:
+    76→    76→- src/app/page.tsx (moved into (public) route group)
+    77→    77→
+    78→    78→Notes for downstream agents:
+    79→    79→- Other public pages should be created under `src/app/(public)/<segment>/page.tsx` so they inherit the AlertBanner + Header + Footer shell automatically.
+    80→    80→- The shared design tokens: emerald-600 (primary), amber-500 (accent), emerald-950 (footer dark bg), emerald-50/100 (soft tints). Avoid blue/indigo.
+    81→    81→- `getSiteContentMap()` is the canonical way to pull CMS text on any server page.
+    82→    82→
+    83→    83→---
+    84→    84→Task ID: 2-b
+    85→    85→Agent: full-stack-developer (About + Contact)
+    86→    86→Task: Build the /about and /contact pages (and the client-side contact query form) inside the (public) route group, matching the shared emerald/amber design system established by Task 2-a.
+    87→    87→
+    88→    88→Work Log:
+    89→    89→- Read worklog + foundation files (data.ts, api/leads/route.ts, seed.ts, (public)/layout.tsx, (public)/page.tsx, layout.tsx, package.json, select.tsx) to align with shared design system (emerald primary, amber accent, sonner Toaster already mounted at root).
+    90→    90→- Created `src/app/(public)/about/page.tsx` (async Server Component) — six sections: (a) emerald gradient hero with breadcrumb "Home / About" + h1 + subtitle + Since badge; (b) Brand story 2-col (story Card with whitespace-pre-line + "At a Glance" Card listing Founded/Founder/Location/Focus with CalendarDays/User/MapPin/Target icons); (c) vertical Growth timeline with emerald dots + connecting line + amber year badges + 5 milestones (2020 Founded → 2024 Multi-Department Hub); (d) Mission & Vision side-by-side cards (Target icon emerald gradient + Eye icon amber gradient); (e) Core values 4-card grid (HandHeart/ShieldCheck/Sprout/Award with hover lift + color shift); (f) emerald gradient CTA band "Want to be part of our journey?" with Contact Us + Explore Departments buttons. All CMS text pulled from getSiteContentMap (about.founder, about.foundedYear, about.story).
+    91→    91→- Created `src/app/(public)/contact/page.tsx` (async Server Component) — three sections: (a) emerald gradient hero with breadcrumb "Home / Contact" + h1 + subtitle + "We're here to help" badge; (b) 2-col contact-info + map row — left side has 5 contact Cards (Phone1 tel:, Phone2 tel:, Email mailto:, Address, Working Hours Mon–Sat 9AM–6PM) with Phone/Mail/MapPin/Clock icons and clickable tel:/mailto: anchors wrapping each card; right side has a Card containing a real Google Maps embed iframe (src `https://www.google.com/maps?q=Churachandpur,Manipur,India&output=embed`) with title="Tongdam Computers location", loading="lazy", referrerPolicy, allowFullScreen, aspect-4/3 → 16/10 responsive, plus an address strip below; (c) emerald-50 query-form section with h2 "Send Us a Query" + description + a Card wrapping the ContactForm client component. All CMS text pulled from getSiteContentMap (contact.phone1, phone2, email, address).
+    92→    92→- Created `src/app/(public)/contact/contact-form.tsx` ('use client') — react-hook-form + zod resolver. Schema validates: name (2–120 chars, required), phone (7–30 chars, required, digits/spaces/+/-/() only), email (optional, RFC-ish regex), subject (required, one of 8 enum options), message (10–4000 chars, required). On submit POSTs to /api/leads with `{ name, email: email||undefined, phone, source: "contact", subject, message }`. Uses shadcn Input/Textarea/Label/Button + Select (8 subject options incl. Course Admission, Aadhaar/PAN/CSP, Restaurant Reservation, Mobile Repair, Tailoring, Hotel Management, Partnership, Other). Submit button shows Loader2 spinner + "Sending..." while isSubmitting. On success: sonner `toast.success("Query sent!", ...)` + reset form + show a thank-you state with CheckCircle2 icon and "Send another query" button. On error: sonner `toast.error("Could not send query", ...)` with server message. All inputs have aria-invalid + aria-describedby error message ids for accessibility.
+    93→    93→- Ran `bun run lint` — passes clean (exit 0), no errors or warnings in any file.
+    94→    94→- Verified via dev.log: GET /about returns 200 in ~55–95ms with proper Prisma queries for AlertBanner + SiteContent executing on each render. Layout inheritance confirmed (AlertBanner + Header + Footer render automatically through (public)/layout.tsx).
+    95→    95→
+    96→    96→Stage Summary:
+    97→    97→- /about page live with 6 cohesive sections — brand story, growth timeline (5 milestones), mission/vision, core values, and CTA band
+    98→    98→- /contact page live with hero, contact cards (clickable tel:/mailto:), Google Maps embed iframe, and integrated query form
+    99→    99→- ContactForm client component fully wired: react-hook-form + zod validation → POST /api/leads → sonner toast notifications + success state
+   100→   100→- All CMS content flows through getSiteContentMap so admin edits propagate to both pages
+   101→   101→- Lint passes clean; /about verified 200 in dev log; design system matches Task 2-a (emerald primary, amber accent, no blue/indigo)
+   102→   102→
+   103→   103→Files created:
+   104→   104→- src/app/(public)/about/page.tsx
+   105→   105→- src/app/(public)/contact/page.tsx
+   106→   106→- src/app/(public)/contact/contact-form.tsx
+   107→   107→
+   108→   108→Files modified: none (only created new files inside the (public) route group; inherited layout already provided by Task 2-a)
+   109→   109→
+   110→   110→Notes for downstream agents:
+   111→   111→- The ContactForm posts with `source: "contact"` — leads will appear under that source in the admin dashboard's lead list. Other public forms (e.g. on department pages) should use distinct `source` strings (e.g. "admission", "reservation") so admins can filter.
+   112→   112→- The /api/leads endpoint requires name, phone, source, subject, message — the contact form meets all required fields plus optional email.
+   113→   113→- Google Maps embed uses a generic Churachandpur query (no API key needed). If the CMS later stores lat/long or a Google Maps place ID, swap the iframe `src` accordingly.
+   114→   114→- Breadcrumb pattern: emerald gradient hero band → nav with "Home / <Page>" using ChevronRight separators + aria-current="page" on the current crumb. Reusable on future sub-pages (e.g. /services/computer-works).
+   115→   115→
+   116→   116→---
+   117→   117→Task ID: 2-c
+   118→   118→Agent: full-stack-developer (Computer Works + Mobile Hub)
+   119→   119→Task: Build the /services/computer-works and /services/mobile-hub pages (plus their client-side inquiry/enrollment forms) inside the (public) route group, matching the shared emerald/amber design system.
+   120→   120→
+   121→   121→Work Log:
+   122→   122→- Read worklog + foundation files (data.ts, api/leads/route.ts, prisma schema + seed for mobile-hub course shape, (public)/layout.tsx, about/page.tsx for design tokens, contact-form.tsx for the form pattern, accordion.tsx for the syllabus UI) to align with the design system established by Tasks 2-a and 2-b.
+   123→   123→- Created `src/app/(public)/services/computer-works/inquiry-form.tsx` ('use client') — react-hook-form + zod. Fields: Name, Phone, Service (Select with the 4 service titles), Message. POSTs to /api/leads with `source: "computer-works"`, `subject` = selected service name. sonner toast feedback + CheckCircle2 success state with reset. aria-invalid / aria-describedby wiring. Unique HTML ids prefixed `cw-`.
+   124→   124→- Created `src/app/(public)/services/computer-works/page.tsx` (async Server Component) — 5 sections: (a) emerald gradient hero with breadcrumb Home / Services / Computer Works + h1 + subtitle + 3 hero badges (Authorized CSP, Aadhaar Enabled, Multilingual Support); (b) 4-card services grid (CSP UCO Bank / Aadhaar & Public Identity / DTP & Printing / Financial & Civil Documentation) — each card has gradient emerald icon tile, description, an emerald-50 "Pricing" mini-list with 4 ₹-placeholder items, amber tag badges, and a "Get this service →" button scroll-linking to #inquiry; (c) Why Choose Us — 4 trust cards with hover-lift; (d) Process — 4-step horizontal flow (Visit Office → Submit Documents → We Process → Collect Receipt) with numbered circles + arrow connectors on desktop; (e) Inquiry CTA `id="inquiry"` — 2-col: left heading + clickable tel: phone card (from contact.phone1 CMS) + working-hours card; right Card wrapping <InquiryForm />. Pulls contact.phone1 from getSiteContentMap().
+   125→   125→- Created `src/app/(public)/services/mobile-hub/enroll-form.tsx` ('use client') — react-hook-form + zod. Fields: Name, Phone, Email (optional), Message. POSTs to /api/leads with `source: "mobile-hub"`, `subject: "Mobile Repair Course Enrollment"`. Same UX pattern as inquiry form (sonner toast, success state, Loader2 spinner, aria wiring). Unique HTML ids prefixed `enroll-`.
+   126→   126→- Created `src/app/(public)/services/mobile-hub/page.tsx` (async Server Component) — fetches getCourses("mobile-hub") + getSiteContentMap() in parallel. 5 sections: (a) emerald gradient hero with breadcrumb + h1 + subtitle + dual CTAs (amber "Browse Retail" + outline "Explore Training" scroll-linking to #retail / #training); (b) Dual-section intro — 2 cards (Retail emerald icon tile, Training amber icon tile) each scroll-linking to its section; (c) Retail `id="retail"` — 6-card grid (Smartphones, Mobile Accessories, Chargers & Cables, Screen Guards & Covers, Power Banks, SIM & Recharge) + emerald-100 brands/EMI info strip; (d) Training `id="training"` — renders all returned mobile-hub courses (currently MOBILE-REPAIR, marked "Featured"); each course card is 2-col: left emerald-gradient panel with code badge + title + description + duration/fee stat tiles + amber "Enroll" button → #enroll; right side Accordion type="multiple" rendering each syllabus topic (comma-split) as an expandable item with a brief description looked up via TOPIC_DESCRIPTIONS map (generic fallback). Below: "Why learn mobile repair?" 4-card benefits row (High Demand / Low-Investment Startup / Quick Earning / Hands-on Practical) with amber icon tiles. Empty-state card if no courses; (e) Enrollment CTA `id="enroll"` — 2-col: left heading + 3-point checklist + clickable tel: card; right Card wrapping <EnrollForm />.
+   127→   127→- Ran `bun run lint` — passes clean (exit 0), no errors or warnings in any file.
+   128→   128→- Verified via curl against the dev server: GET /services/computer-works → 200 (first-compile ~2.7s), GET /services/mobile-hub → 200 (first-compile ~1.3s). Content spot-check confirms expected headings, service titles, course code MOBILE-REPAIR, benefits, and CTAs all render. No errors in dev.log.
+   129→   129→
+   130→   130→Stage Summary:
+   131→   131→- /services/computer-works live with 5 cohesive sections: hero with badges, 4-card services grid with pricing mini-lists, why-choose-us row, 4-step process flow, and an integrated inquiry form that POSTs to /api/leads with source "computer-works".
+   132→   132→- /services/mobile-hub live with 5 cohesive sections: hero with dual CTAs, retail/training intro cards, 6-card retail grid, featured course card with accordion syllabus + benefits row, and an enrollment form that POSTs to /api/leads with source "mobile-hub".
+   133→   133→- Two new lead sources ("computer-works", "mobile-hub") now flow into the Lead table — admin dashboard should treat them as filterable alongside existing "contact".
+   134→   134→- mobile-hub page auto-renders ALL active mobile-hub institute courses (first one tagged "Featured") so admin can add more via /api/admin/courses without page changes.
+   135→   135→- All forms follow the established react-hook-form + zod + sonner pattern from Task 2-b's contact-form; design system matches Task 2-a (emerald primary, amber accent, no blue/indigo).
+   136→   136→- Lint passes clean; both routes verified 200 in dev server.
+   137→   137→
+   138→   138→Files created:
+   139→   139→- src/app/(public)/services/computer-works/page.tsx
+   140→   140→- src/app/(public)/services/computer-works/inquiry-form.tsx
+   141→   141→- src/app/(public)/services/mobile-hub/page.tsx
+   142→   142→- src/app/(public)/services/mobile-hub/enroll-form.tsx
+   143→   143→
+   144→   144→Files modified: none (only created new files inside the (public)/services/ route group; inherited AlertBanner + Header + Footer shell already provided by Task 2-a's (public)/layout.tsx).
+   145→   145→
+   146→   146→Notes for downstream agents:
+   147→   147→- Two new lead sources are now in play: "computer-works" and "mobile-hub". The admin dashboard lead list/filter (Task 3+) should include these alongside "contact".
+   148→   148→- The mobile-hub page renders ALL active courses with institute "mobile-hub" — the first is auto-tagged "Featured". Adding more courses via /api/admin/courses (institute: "mobile-hub") requires no page edits.
+   149→   149→- The TOPIC_DESCRIPTIONS map in mobile-hub/page.tsx enriches accordion content for known syllabus topics (Mobile Hardware Basics, Soldering & Desoldering, Chip-Level Repair, Software Flashing, Battery & Display Replacement). New topics fall back to a generic description — extend the map to enrich.
+   150→   150→- Anchor scroll targets (#inquiry, #retail, #training, #enroll) use scroll-mt-24 to clear the sticky header (~64px, z-50). Future pages with hash navigation should follow the same offset.
+   151→   151→- Forms do NOT use useSearchParams (would require a Suspense boundary). Card "Get this service" / "Enroll" buttons simply scroll to the form section via hash — simple and robust.
+   152→   152→
+   153→   153→---
+   154→   154→Task ID: 2-d
+   155→   155→Agent: full-stack-developer (Education pages)
+   156→   156→Task: Build the /education/computer-training, /education/tailoring, and /education/hotel-management pages (plus their client-side enroll/syllabus-download components) inside the (public) route group, matching the shared emerald/amber design system established by Tasks 2-a/2-b/2-c.
+   157→   157→
+   158→   158→Work Log:
+   159→   159→- Read worklog + foundation files (data.ts, prisma/seed.ts for course shape + content keys, (public)/layout.tsx, services/mobile-hub page.tsx + enroll-form.tsx for the design pattern, contact/contact-form.tsx for the Select pattern, accordion.tsx) to align with the established emerald primary / amber accent / no blue-indigo design system.
+   160→   160→- Created `src/app/(public)/education/computer-training/enroll-form.tsx` ('use client') — react-hook-form + zod. Props: `courses: CourseOption[]` (code + title) serialized from the server page. Fields: Name, Phone, Email (optional), Course (shadcn Select populated from the courses prop — items render "[CODE] Title"), Message (optional). POSTs to /api/leads with `source: "computer-training"`, `subject: "Course Enrollment: <selected course>"`, and a sensible default message body if the visitor leaves the optional message blank. sonner toast feedback + CheckCircle2 success state with reset. aria-invalid / aria-describedby wiring. Unique HTML ids prefixed `ct-`.
+   161→   161→- Created `src/app/(public)/education/computer-training/page.tsx` (async Server Component) — fetches `getCourses("computer-training")` + `getSiteContentMap()` in parallel. 5 sections: (a) emerald gradient hero with breadcrumb Home / Education / Computer Training + two prominent amber badges — `training.emaxBadge` (small amber badge with BadgeCheck icon) and `training.topRank` (extra-prominent amber banner with Trophy icon, slightly larger) + h1 + subtitle + dual CTAs (amber "Enroll Now" + outline "Browse Courses"); (b) "Why Top 1" — 4 highlight cards (Govt Recognized Certification / Industry-Relevant Syllabus / Experienced Faculty / Placement Assistance) with hover-lift emerald icon tiles; (c) Courses list — renders all returned computer-training courses as 2-col cards: amber code badge (Award icon), h3 title, description, duration (Clock) + fee (IndianRupee) stat tiles in emerald-50 boxes, a shadcn Accordion "Syllabus" expandable showing the comma-split syllabus topics as emerald-tinted chips, and an emerald "Enroll" button scroll-linking to #enroll; (d) Certification & affiliation — 2-col: left emerald-gradient affiliation Card with Award icon, `training.emaxBadge` text, an E-Max India bordered placeholder box (BadgeCheck icon + "Authorized Training Partner" subtitle), and an amber-tinted `training.topRank` strip; right side "What students walk away with" 4-item grid (Verified E-Max India Certificate / Govt Recognition / Skill Transcript / Top 1 Ranking) with CheckCircle2 icons + a "Trusted by" strip; (e) Enrollment form `id="enroll"` — Card with emerald-gradient left panel (h2 "Enroll Now" + checklist of 3 points) and right panel wrapping <EnrollForm courses={courseOptions} /> where courseOptions is the serialized plain-object list; (f) CTA strip — emerald gradient band with "Ready to start your IT career?" + Enroll Now + Talk to an Advisor buttons.
+   162→   162→- Created `src/app/(public)/education/tailoring/syllabus-download.tsx` ('use client') — small client component for the "Download Full Syllabus" CTA. Button onClick fires a sonner `toast.success` ("Syllabus request noted!") and reveals a "Continue to contact form" button linking to `/contact?subject=Tailoring+Syllabus+Request`. No real PDF generation — kept simple per spec.
+   163→   163→- Created `src/app/(public)/education/tailoring/page.tsx` (async Server Component) — fetches `getCourses("tailoring")`. 6 sections: (a) emerald gradient hero with breadcrumb Home / Education / Tailoring + amber "Hands-on Practical Training" badge (HandHeart icon) + h1 + subtitle + dual CTAs (amber "Explore Courses" + outline "View Student Work"); (b) Overview — 2-col: left intro text about fashion design & tailoring training (3 paragraphs) + "View Courses" + "Enquire Now" buttons; right emerald-to-white gradient Card with amber-gradient icon tile + "Why train with us" + 4 key-fact list items (Certified Courses / Hands-on Training / Material Provided / Job-Ready Skills) each with white icon tile + heading + description; (c) Courses — fetches tailoring courses; renders as 2-col cards following the same pattern as computer-training (amber code badge, h3, desc, duration/fee stat tiles, syllabus accordion with chips). Enroll button is an outline emerald variant that links to `/contact?subject=Tailoring+Enrollment` (no inline form, kept simple per spec); (d) Student gallery — `id="gallery"` — 8 stylized gallery tiles in a 2/3/4-col responsive grid, each an aspect-square gradient card (alternating emerald/teal/amber/rose gradients) with a white-blur icon tile + label + caption. Tiles: Blouse Design (Shirt), Frock (Sparkles), Embroidery Work (PenTool), Pattern Drafting (Layers), Kurti & Top (Shirt), alterations & Repair (Scissors), Bridal Wear (Heart), Boutique Setup (Briefcase). No photos required; (e) Syllabus download — a Card with the SyllabusDownloadButton client component + checklist of 3 syllabus features + a "Prefer to talk?" link to /contact; (f) CTA — emerald gradient band "Start your tailoring journey today" + Enroll Now (links to /contact) + Talk to an Instructor buttons.
+   164→   164→- Created `src/app/(public)/education/hotel-management/enroll-form.tsx` ('use client') — react-hook-form + zod. Fields: Name, Phone, Email (optional), Message (optional). POSTs to /api/leads with `source: "hotel-management"`, `subject: "Hotel Management Diploma Enrollment"`, default message body if blank. sonner toast feedback + CheckCircle2 success state ("Application received!") with reset. Unique HTML ids prefixed `hm-`.
+   165→   165→- Created `src/app/(public)/education/hotel-management/page.tsx` (async Server Component) — fetches `getCourses("hotel-management")` + `getSiteContentMap()` in parallel for `hotel.placement`. 6 sections: (a) emerald gradient hero with breadcrumb Home / Education / Hotel Management + a VERY prominent amber placement banner (Trophy icon, large text from `hotel.placement` content = "Diploma in Hotel Management (1-Year Course) | 100% Placement Guarantee at 5-Star Hotels Pan-India.") + h1 + subtitle + dual CTAs (amber "Apply Now" + outline "View Course Breakdown"); (b) 100% Placement highlight — 4 stat cards (100% Placement / 5-Star Hotel Partners / 1-Year Diploma / Industrial Training Included) each with emerald icon tile + amber badge showing the stat (100% / 5★ / 12 mo / OJT) + hover-lift; plus a "Written guarantee" info strip with ShieldCheck icon; (c) Course breakdown `id="course"` — renders the HM-DIPLOMA course as a detailed 2-col card: left emerald-gradient panel with code badge (Award), title, description, duration (Clock) + fee (IndianRupee) stat tiles, and an amber "Apply for this Diploma" button → #enroll; right side a structured Accordion type="multiple" rendering each syllabus topic as an expandable item with a dedicated icon tile (ChefHat for Food Production, UtensilsCrossed for Bakery, ConciergeBell for F&B Service / Front Office, BedDouble for Housekeeping, Sparkles for Soft Skills, Briefcase for Industrial Training) and a per-module description looked up via SYLLABUS_MODULES map (with FALLBACK_MODULE for unknown topics); (d) Industry partnerships — "Our Hospitality Partners" 4-card grid (5-Star Hotel Network / Resort Chains / Cruise Lines / Fine Dining) each with a gradient icon tile (Hotel/Building2/Ship/UtensilsCrossed) + name + description; plus a "Pan-India network" info strip; (e) Training facilities — 4-card grid (Modern Kitchen / Training Restaurant / Housekeeping Lab / Front Office Simulation) with emerald icon tiles + hover-lift; (f) Enrollment form `id="enroll"` — Card with emerald-gradient left panel (amber Trophy badge + h2 "Apply for Hotel Management Diploma" + 3-point checklist) and right panel wrapping <EnrollForm />; (g) CTA strip — emerald gradient band "Step into a global hospitality career" + Apply Now + Talk to Admissions buttons.
+   166→   166→- Ran `bun run lint` — passes clean (exit 0), no errors or warnings in any file.
+   167→   167→- Verified via curl against the dev server: GET /education/computer-training → 200 (first-compile ~624ms), GET /education/tailoring → 200 (first-compile ~807ms), GET /education/hotel-management → 200 (first-compile ~553ms). Content spot-check confirms expected headings, course codes (DCA / TALLY / TAILOR-BASIC / HM-DIPLOMA), placement banner text, gallery labels, and CTAs all render. No errors or warnings in dev.log.
+   168→   168→
+   169→   169→Stage Summary:
+   170→   170→- /education/computer-training live with 6 cohesive sections: hero with E-Max badge + Top 1 banner, Why Top 1 highlights, courses grid (4 courses: DCA, ADCA, TALLY, WEB) with syllabus accordions, E-Max India affiliation card with logo placeholder + on-completion benefits, integrated enroll form with course-select, and a CTA strip. Posts leads with source "computer-training" and dynamic subject "Course Enrollment: <course>".
+   171→   171→- /education/tailoring live with 6 cohesive sections: hero with "Hands-on Practical Training" badge, overview with key-facts card, courses grid (2 courses: TAILOR-BASIC, TAILOR-ADV) with syllabus accordions, 8-tile stylized gallery, syllabus-download CTA (sonner toast → /contact link), and a CTA band. Enroll buttons route to /contact?subject=Tailoring+Enrollment (no inline form, kept simple per spec).
+   172→   172→- /education/hotel-management live with 7 cohesive sections: hero with prominent 100% placement amber banner, placement-guarantee stats grid (100% / 5★ / 12 mo / OJT), detailed course breakdown card with structured syllabus accordion (7 modules each with dedicated icon + description), industry partnerships grid (4 partner types), training facilities grid (4 labs), integrated application form, and a CTA strip. Posts leads with source "hotel-management" and subject "Hotel Management Diploma Enrollment".
+   173→   173→- Three new lead sources ("computer-training", "tailoring" via /contact, "hotel-management") now flow into the Lead table — admin dashboard should treat them as filterable alongside existing "contact" / "computer-works" / "mobile-hub".
+   174→   174→- All three pages render ALL active courses for their institute so admin can add more via /api/admin/courses without page changes.
+   175→   175→- All forms follow the established react-hook-form + zod + sonner pattern; design system matches Task 2-a (emerald primary, amber accent, no blue/indigo). Lint passes clean; all three routes verified 200 in dev server.
+   176→   176→
+   177→   177→Files created:
+   178→   178→- src/app/(public)/education/computer-training/page.tsx
+   179→   179→- src/app/(public)/education/computer-training/enroll-form.tsx
+   180→   180→- src/app/(public)/education/tailoring/page.tsx
+   181→   181→- src/app/(public)/education/tailoring/syllabus-download.tsx (extra client component — needed for the sonner toast + /contact link CTA per spec)
+   182→   182→- src/app/(public)/education/hotel-management/page.tsx
+   183→   183→- src/app/(public)/education/hotel-management/enroll-form.tsx
+   184→   184→
+   185→   185→Files modified: none (only created new files inside the (public)/education/ route group; inherited AlertBanner + Header + Footer shell already provided by Task 2-a's (public)/layout.tsx).
+   186→   186→
+   187→   187→Notes for downstream agents:
+   188→   188→- Three new lead sources are now in play: "computer-training" and "hotel-management" (both posted directly from inline enroll forms), plus "tailoring" leads will arrive via the existing contact form (since tailoring enroll buttons route to /contact?subject=Tailoring+Enrollment — the contact form's SUBJECTS enum already includes "Tailoring / Fashion Design Course"). The admin dashboard lead list/filter (Task 3+) should include "computer-training" and "hotel-management" alongside existing "contact", "computer-works", "mobile-hub".
+   189→   189→- The computer-training enroll form accepts a `courses` prop (CourseOption[] = { code, title }) serialized from the server page; if the admin adds/removes courses via /api/admin/courses (institute: "computer-training"), the form's course-select updates automatically on next page render — no form edits needed.
+   190→   190→- The hotel-management page renders the syllabus as a structured Accordion with a SYLLABUS_MODULES map providing per-topic icons + descriptions. If the admin edits the HM-DIPLOMA syllabus via /api/admin/courses, new topics fall back to FALLBACK_MODULE (Award icon + generic description) — extend the map to enrich new topics.
+   191→   191→- The tailoring gallery is a stylized grid of gradient tiles (no photos) — if real student-work photos become available later, swap the GALLERY_TILES array items' gradient/icon for actual <Image> components.
+   192→   192→- Anchor scroll targets (#courses, #gallery, #enroll, #course) use scroll-mt-24 to clear the sticky header (~64px, z-50), matching the pattern established by Task 2-c.
+   193→   193→- The tailoring "Download Full Syllabus" button is a client component (syllabus-download.tsx) because sonner toasts can only be triggered from client code. It does NOT generate a real PDF — it shows a toast and reveals a "Continue to contact form" button linking to /contact?subject=Tailoring+Syllabus+Request. Swap for a real PDF route later if needed.
+   194→   194→
+   195→   195→---
+   196→   196→Task ID: 2-e
+   197→   197→Agent: full-stack-developer (Restaurant)
+   198→   198→Task: Build the Tongdam Restaurant lifestyle page (digital menu + specials + table reservation inquiry)
+   199→   199→
+   200→   200→Work Log:
+   201→   201→- Read worklog + existing patterns (computer-works page/inquiry-form, mobile-hub enroll-form, public layout, /api/leads route, menu seed data with 3 categories: Appetizers, Mains, Drinks).
+   202→   202→- Created `src/app/(public)/lifestyle/restaurant/reservation-form.tsx` — 'use client' form using react-hook-form + zod. Fields: Name (req), Phone (req), Email (opt), Guests (Select: 1-2/3-4/5-6/7+), Date (date input), Time (time input), Special Request (textarea, opt). POSTs to /api/leads with `source: "restaurant"`, `subject: "Table Reservation"`, composed `message: "Reservation for {guests} on {date} at {time}. {specialRequest}"`. sonner toasts + success state showing a confirmation summary card with formatted date/time and a "Make another reservation" button. Accessibility: aria-invalid, aria-describedby, labeled fields, role=status live region.
+   203→   203→- Created `src/app/(public)/lifestyle/restaurant/page.tsx` — async Server Component. Sections:
+   204→   204→  (a) Hero header — emerald→teal gradient band, breadcrumb Home / Lifestyle / Restaurant, badge row ("Pure Veg & Non-Veg", "Hygienic Kitchen", "Affordable Pricing"), decorative food icon row (Utensils, Soup, Coffee, Cake).
+   205→   205→  (b) Quick info bar — 4-tile strip (Opening Hours, Location, Phone [tel: link], Daily Specials).
+   206→   206→  (c) Digital menu (id="menu") — shadcn Tabs driven DYNAMICALLY by `Object.keys(getMenuGrouped())` so admin-added categories auto-appear. Each tab shows a count badge and renders items in a 2-column grid as printed-menu rows: veg/non-veg indicator square (emerald for veg, rose for non-veg) + name + dotted leader (`border-b-2 border-dotted`) + bold emerald right-aligned price + muted description below. Empty states for empty categories and for an entirely empty menu.
+   207→   207→  (d) Today's Specials — amber-tinted Card grid (3 items). `pickSpecials()` helper prefers Chicken Curry / Paneer Butter Masala / Fish Curry by name, falls back to first 3 Mains, then first 3 overall. Each card shows Leaf (veg) or Drumstick (non-veg) icon, Special # badge, description, "Today only" + price.
+   208→   208→  (e) Reservation (id="reserve") — Card hosting ReservationForm; left column has heading, phone CTA, hours, and a "View the menu" link.
+   209→   209→- Menu note under the menu: "Prices are inclusive of all taxes. Menu items are updated regularly — please confirm availability at the counter."
+   210→   210→- Ran `bun run lint` — clean (no errors/warnings in my files).
+   211→   211→- Smoke-tested route: `GET /lifestyle/restaurant` → 200 (compiled + rendered in ~1.2s). No errors in dev.log.
+   212→   212→
+   213→   213→Stage Summary:
+   214→   214→- Files created (only these two):
+   215→   215→  - src/app/(public)/lifestyle/restaurant/page.tsx (Server Component, async)
+   216→   216→  - src/app/(public)/lifestyle/restaurant/reservation-form.tsx ('use client')
+   217→   217→- Design system matches sibling pages: EMERALD primary, AMBER accents, no blue/indigo, gradient hero, shadcn/ui + lucide-react, semantic HTML, accessible.
+   218→   218→- Menu categories are 100% dynamic from `getMenuGrouped()` keys — admin can add categories in the DB and they'll appear as new tabs automatically.
+   219→   219→- Reservation leads land in the Lead table with source="restaurant", subject="Table Reservation" — visible in admin dashboard.
+   220→   220→- No other agents' files touched. No test files written. No new routes beyond the one assigned.
+   221→   221→
