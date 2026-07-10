@@ -131,12 +131,10 @@ export default async function HomePage() {
 
   return (
     <>
-      {/* ============== HERO + STATS (full viewport on desktop) ============== */}
-      <div className="bg-[#f6f3ec] lg:flex lg:min-h-[calc(100svh-4rem)] lg:flex-col">
-      {/* ============== HERO ============== */}
+      {/* ============== HERO (contains stats) — header + hero = 100vh on desktop ============== */}
       <section
         aria-labelledby="hero-heading"
-        className="relative overflow-hidden lg:flex lg:flex-1 lg:flex-col lg:justify-center"
+        className="relative overflow-hidden border-b border-stone-200 bg-[#f6f3ec] lg:flex lg:min-h-[calc(100svh-4rem)] lg:flex-col lg:justify-center"
       >
         {/* Subtle grid pattern */}
         <div
@@ -153,7 +151,7 @@ export default async function HomePage() {
           }}
         />
 
-        <div className="relative mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:py-8">
+        <div className="relative mx-auto max-w-7xl px-4 pt-12 pb-6 sm:px-6 lg:pt-8 lg:pb-4">
           <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-12 lg:gap-12">
             {/* Left column: heading + buttons + mini stats */}
             <div className="lg:col-span-7">
@@ -260,11 +258,9 @@ export default async function HomePage() {
             </div>
           </div>
         </div>
-      </section>
 
-      {/* ============== STATS BAR ============== */}
-      <section aria-label="Quick stats" className="relative">
-        <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:py-8">
+        {/* ============== STATS BAR (inside hero) ============== */}
+        <div aria-label="Quick stats" className="relative mx-auto w-full max-w-7xl px-4 pb-10 sm:px-6 lg:pb-10">
           <dl className="grid grid-cols-2 gap-4 lg:grid-cols-4">
             {STATS.map((stat) => {
               const Icon = stat.icon;
@@ -284,7 +280,6 @@ export default async function HomePage() {
           </dl>
         </div>
       </section>
-      </div>
 
       {/* ============== DEPARTMENTS ============== */}
       <section
