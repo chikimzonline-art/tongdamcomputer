@@ -12,6 +12,7 @@ import {
   Hotel,
   Utensils,
   ArrowUpRight,
+  Lock,
 } from "lucide-react";
 import { getSiteContentMap } from "@/lib/data";
 
@@ -77,6 +78,14 @@ export async function SiteFooter() {
                 {emaxBadge}
               </span>
             </div>
+            <Link
+              href="/admin/login"
+              className="mt-4 inline-flex items-center gap-1.5 rounded-md border border-emerald-700/60 bg-emerald-900/40 px-3 py-1.5 text-xs font-medium text-emerald-100/80 transition-colors hover:border-amber-400/60 hover:bg-emerald-800/60 hover:text-amber-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400/60"
+              aria-label="Admin login — staff access"
+            >
+              <Lock className="size-3.5" aria-hidden="true" />
+              Admin Login
+            </Link>
           </div>
 
           {/* Quick links */}
@@ -167,15 +176,7 @@ export async function SiteFooter() {
         {/* Bottom bar */}
         <div className="mt-10 flex flex-col gap-3 border-t border-emerald-900/80 pt-6 text-xs text-emerald-200/70 sm:flex-row sm:items-center sm:justify-between">
           <p className="leading-relaxed">
-            {/* The copyright text itself is a low-contrast link to the admin
-                login page — discoverable for staff without being obvious. */}
-            <Link
-              href="/admin/login"
-              className="text-emerald-200/70 underline-offset-2 transition-colors hover:text-emerald-100 hover:underline focus:outline-none focus-visible:underline"
-              aria-label="Staff login"
-            >
-              © {foundedYear === "2020" ? "2020" : "2024"} Tongdam Computers.
-            </Link>{" "}
+            © {foundedYear === "2020" ? "2020" : "2024"} Tongdam Computers.
             Founded by {founder}. All rights reserved.
           </p>
           <p className="flex items-center gap-1">
