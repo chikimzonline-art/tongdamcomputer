@@ -261,21 +261,21 @@ export default async function HomePage() {
       </section>
 
       {/* ============== STATS BAR ============== */}
-      <section aria-label="Quick stats" className="bg-white">
+      <section aria-label="Quick stats" className="bg-[#f6f3ec]">
         <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:py-12">
-          <dl className="grid grid-cols-2 gap-6 lg:grid-cols-4">
+          <dl className="grid grid-cols-2 gap-4 lg:grid-cols-4">
             {STATS.map((stat) => {
               const Icon = stat.icon;
               return (
                 <div
                   key={stat.label}
-                  className="flex flex-col items-center text-center"
+                  className="flex flex-col items-center rounded-xl border border-stone-200 bg-white px-4 py-6 text-center shadow-sm"
                 >
-                  <span className="mb-3 flex size-11 items-center justify-center rounded-full bg-emerald-50 text-emerald-700">
-                    <Icon className="size-5" aria-hidden="true" />
+                  <span className="mb-4 flex size-12 items-center justify-center rounded-full bg-emerald-50 text-emerald-700">
+                    <Icon className="size-6" aria-hidden="true" />
                   </span>
-                  <dd className="text-3xl font-bold text-emerald-700">{stat.value}</dd>
-                  <dt className="mt-1 text-sm text-stone-500">{stat.label}</dt>
+                  <dd className="text-3xl font-bold text-stone-900">{stat.value}</dd>
+                  <dt className="mt-1.5 text-sm text-stone-500">{stat.label}</dt>
                 </div>
               );
             })}
