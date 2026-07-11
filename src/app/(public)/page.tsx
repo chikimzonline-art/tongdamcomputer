@@ -36,7 +36,6 @@ type Venture = {
   icon: React.ElementType;
   badge: string;
   features: string[];
-  courseCount: string;
   /** Tailwind classes for accent color (bar/icon/badge-bg/badge-text/feature-dot) */
   accent: {
     bar: string;
@@ -61,7 +60,6 @@ const VENTURES: Venture[] = [
       "Aadhaar Enrolment & Updates",
       "PAN Card Services",
     ],
-    courseCount: "0 Courses Available",
     accent: {
       bar: "bg-emerald-500",
       iconBg: "bg-emerald-50",
@@ -83,7 +81,6 @@ const VENTURES: Venture[] = [
       "Top 1 Ranked Institute",
       "Experienced Faculty",
     ],
-    courseCount: "6 Courses Available",
     accent: {
       bar: "bg-emerald-500",
       iconBg: "bg-emerald-50",
@@ -105,7 +102,6 @@ const VENTURES: Venture[] = [
       "Pattern Making & Design",
       "Professional Machine Training",
     ],
-    courseCount: "4 Courses Available",
     accent: {
       bar: "bg-pink-500",
       iconBg: "bg-pink-50",
@@ -127,7 +123,6 @@ const VENTURES: Venture[] = [
       "Front Office Training",
       "Housekeeping & F&B Service",
     ],
-    courseCount: "4 Courses Available",
     accent: {
       bar: "bg-amber-500",
       iconBg: "bg-amber-50",
@@ -149,7 +144,6 @@ const VENTURES: Venture[] = [
       "Fresh Ingredients Daily",
       "Family-Friendly Atmosphere",
     ],
-    courseCount: "0 Courses Available",
     accent: {
       bar: "bg-amber-500",
       iconBg: "bg-amber-50",
@@ -171,7 +165,6 @@ const VENTURES: Venture[] = [
       "Chip-Level Repair Training",
       "Genuine Parts Used",
     ],
-    courseCount: "3 Courses Available",
     accent: {
       bar: "bg-violet-500",
       iconBg: "bg-violet-50",
@@ -465,10 +458,7 @@ export default async function HomePage() {
                     </ul>
 
                     {/* Footer */}
-                    <div className="mt-6 flex items-center justify-between border-t border-gray-100 pt-4">
-                      <span className="text-sm font-medium text-gray-500">
-                        {v.courseCount}
-                      </span>
+                    <div className="mt-6 flex items-center justify-end border-t border-gray-100 pt-4">
                       <span className="inline-flex items-center gap-1 text-sm font-semibold text-gray-900 transition-colors group-hover:text-emerald-700">
                         Learn More
                         <ArrowRight
