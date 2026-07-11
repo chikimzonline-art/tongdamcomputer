@@ -5,9 +5,9 @@ export const dynamic = "force-dynamic";
 
 const INSTITUTE_LABELS: Record<string, string> = {
   "computer-training": "Computer Training",
-  tailoring: "Tailoring & Fashion Design",
+  tailoring: "Tailoring & Fashion",
   "hotel-management": "Hotel Management",
-  "mobile-hub": "Mobile Hub",
+  "mobile-hub": "Mobile Repairing",
 };
 
 const INSTITUTE_ORDER = [
