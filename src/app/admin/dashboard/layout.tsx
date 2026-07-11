@@ -16,6 +16,7 @@ import {
   ExternalLink,
   Menu,
   Loader2,
+  LayoutGrid,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -36,6 +37,7 @@ type NavItem = {
 const NAV_ITEMS: NavItem[] = [
   { href: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/admin/dashboard/leads", label: "Leads", icon: Inbox },
+  { href: "/admin/dashboard/ventures", label: "Ventures", icon: LayoutGrid },
   { href: "/admin/dashboard/cms", label: "Content", icon: FileEdit },
   { href: "/admin/dashboard/courses", label: "Courses", icon: GraduationCap },
   { href: "/admin/dashboard/menu", label: "Menu", icon: Utensils },

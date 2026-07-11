@@ -7,11 +7,6 @@ import {
   Trophy,
   Users,
   Computer,
-  Smartphone,
-  GraduationCap,
-  Scissors,
-  Hotel,
-  Utensils,
   CalendarCheck,
   BookOpen,
   IdCard,
@@ -22,159 +17,12 @@ import {
   Mail,
   Briefcase,
   Check,
-  Wrench,
 } from "lucide-react";
-import { getSiteContentMap } from "@/lib/data";
+import { getSiteContentMap, getVentures } from "@/lib/data";
+import { VENTURE_ICONS, VENTURE_ACCENTS, DEFAULT_ACCENT } from "@/lib/venture-config";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-
-type Venture = {
-  title: string;
-  description: string;
-  href: string;
-  icon: React.ElementType;
-  badge: string;
-  features: string[];
-  /** Tailwind classes for accent color (bar/icon/badge-bg/badge-text/feature-dot) */
-  accent: {
-    bar: string;
-    iconBg: string;
-    iconText: string;
-    badgeBg: string;
-    badgeText: string;
-    dot: string;
-  };
-};
-
-const VENTURES: Venture[] = [
-  {
-    title: "Computer Works",
-    description:
-      "Your trusted center for banking services, Aadhaar, PAN, voter ID, birth certificates, DTP & printing — all in one place.",
-    href: "/services/computer-works",
-    icon: Computer,
-    badge: "Authorized CSP • UCO Bank",
-    features: [
-      "UCO Bank CSP (Authorized)",
-      "Aadhaar Enrolment & Updates",
-      "PAN Card Services",
-    ],
-    accent: {
-      bar: "bg-emerald-500",
-      iconBg: "bg-emerald-50",
-      iconText: "text-emerald-600",
-      badgeBg: "bg-emerald-50",
-      badgeText: "text-emerald-700",
-      dot: "text-emerald-500",
-    },
-  },
-  {
-    title: "Tongdam Computer Training Center",
-    description:
-      "Top 1 Institute under E-Max India all over India — providing certified computer education with placement support.",
-    href: "/education/computer-training",
-    icon: GraduationCap,
-    badge: "Top 1 in India • E-Max India",
-    features: [
-      "Govt. Recognized Certifications",
-      "Top 1 Ranked Institute",
-      "Experienced Faculty",
-    ],
-    accent: {
-      bar: "bg-emerald-500",
-      iconBg: "bg-emerald-50",
-      iconText: "text-emerald-600",
-      badgeBg: "bg-emerald-50",
-      badgeText: "text-emerald-700",
-      dot: "text-emerald-500",
-    },
-  },
-  {
-    title: "Tongdam Tailoring Training Center",
-    description:
-      "Professional tailoring training programs designed to empower individuals with a lifelong, income-generating skill.",
-    href: "/education/tailoring",
-    icon: Scissors,
-    badge: "Skill Development Program",
-    features: [
-      "Basic to Advanced Tailoring",
-      "Pattern Making & Design",
-      "Professional Machine Training",
-    ],
-    accent: {
-      bar: "bg-pink-500",
-      iconBg: "bg-pink-50",
-      iconText: "text-pink-600",
-      badgeBg: "bg-pink-50",
-      badgeText: "text-pink-700",
-      dot: "text-pink-500",
-    },
-  },
-  {
-    title: "Tongdam Institute of Hotel Management",
-    description:
-      "One-year diploma program with guaranteed 100% placement across 5-star hotels all over India.",
-    href: "/education/hotel-management",
-    icon: Hotel,
-    badge: "100% Placement • 5-Star Hotels",
-    features: [
-      "1-Year Diploma Program",
-      "Front Office Training",
-      "Housekeeping & F&B Service",
-    ],
-    accent: {
-      bar: "bg-amber-500",
-      iconBg: "bg-amber-50",
-      iconText: "text-amber-600",
-      badgeBg: "bg-amber-50",
-      badgeText: "text-amber-700",
-      dot: "text-amber-500",
-    },
-  },
-  {
-    title: "Tongdam Restaurant",
-    description:
-      "A warm, welcoming dining destination serving delicious local and multi-cuisine dishes made with fresh ingredients.",
-    href: "/lifestyle/restaurant",
-    icon: Utensils,
-    badge: "Fresh • Local • Welcoming",
-    features: [
-      "Local & Multi-Cuisine Menu",
-      "Fresh Ingredients Daily",
-      "Family-Friendly Atmosphere",
-    ],
-    accent: {
-      bar: "bg-amber-500",
-      iconBg: "bg-amber-50",
-      iconText: "text-amber-600",
-      badgeBg: "bg-amber-50",
-      badgeText: "text-amber-700",
-      dot: "text-amber-500",
-    },
-  },
-  {
-    title: "Tongdam Mobile Repairing Center",
-    description:
-      "A service center cum training institute for mobile phone repair — learn a high-demand skill or get your device fixed.",
-    href: "/services/mobile-hub",
-    icon: Wrench,
-    badge: "Repair + Training Center",
-    features: [
-      "All-Brand Mobile Repair",
-      "Chip-Level Repair Training",
-      "Genuine Parts Used",
-    ],
-    accent: {
-      bar: "bg-violet-500",
-      iconBg: "bg-violet-50",
-      iconText: "text-violet-600",
-      badgeBg: "bg-violet-50",
-      badgeText: "text-violet-700",
-      dot: "text-violet-500",
-    },
-  },
-];
 
 const STATS = [
   { label: "Business Ventures", value: "6+", icon: Briefcase },
@@ -217,6 +65,7 @@ const TIMELINE = [
 
 export default async function HomePage() {
   const content = await getSiteContentMap();
+  const ventures = await getVentures();
   const heroTitle = content["hero.title"] ?? "From a Local Startup to a Multi-Department Hub";
   const heroSubtitle =
     content["hero.subtitle"] ??
@@ -408,28 +257,37 @@ export default async function HomePage() {
           </div>
 
           <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8">
-            {VENTURES.map((v) => {
-              const Icon = v.icon;
+            {ventures.map((v) => {
+              const Icon = VENTURE_ICONS[v.icon] ?? Computer;
+              const accent = VENTURE_ACCENTS[v.accent] ?? DEFAULT_ACCENT;
+              const features: string[] = (() => {
+                try {
+                  const parsed = JSON.parse(v.features);
+                  return Array.isArray(parsed) ? parsed : [];
+                } catch {
+                  return [];
+                }
+              })();
               return (
                 <Link
-                  key={v.href}
+                  key={v.id}
                   href={v.href}
                   aria-label={`Open ${v.title}`}
                   className="group relative flex flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/50"
                 >
                   {/* Top accent bar */}
-                  <span className={`h-1 w-full ${v.accent.bar}`} aria-hidden="true" />
+                  <span className={`h-1 w-full ${accent.bar}`} aria-hidden="true" />
 
                   <div className="flex flex-1 flex-col p-6">
                     {/* Icon + Badge row */}
                     <div className="mb-4 flex items-start justify-between gap-3">
                       <span
-                        className={`flex size-12 items-center justify-center rounded-lg ${v.accent.iconBg} ${v.accent.iconText}`}
+                        className={`flex size-12 items-center justify-center rounded-lg ${accent.iconBg} ${accent.iconText}`}
                       >
                         <Icon className="size-6" aria-hidden="true" />
                       </span>
                       <span
-                        className={`inline-flex items-center rounded-md px-2.5 py-1 text-xs font-medium ${v.accent.badgeBg} ${v.accent.badgeText}`}
+                        className={`inline-flex items-center rounded-md px-2.5 py-1 text-xs font-medium ${accent.badgeBg} ${accent.badgeText}`}
                       >
                         {v.badge}
                       </span>
@@ -442,20 +300,22 @@ export default async function HomePage() {
                     </p>
 
                     {/* Features list */}
-                    <ul className="mt-4 space-y-2">
-                      {v.features.map((f) => (
-                        <li
-                          key={f}
-                          className="flex items-center gap-2 text-sm text-gray-600"
-                        >
-                          <Check
-                            className={`size-4 shrink-0 ${v.accent.dot}`}
-                            aria-hidden="true"
-                          />
-                          <span>{f}</span>
-                        </li>
-                      ))}
-                    </ul>
+                    {features.length > 0 && (
+                      <ul className="mt-4 space-y-2">
+                        {features.map((f) => (
+                          <li
+                            key={f}
+                            className="flex items-center gap-2 text-sm text-gray-600"
+                          >
+                            <Check
+                              className={`size-4 shrink-0 ${accent.dot}`}
+                              aria-hidden="true"
+                            />
+                            <span>{f}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
 
                     {/* Footer */}
                     <div className="mt-6 flex items-center justify-end border-t border-gray-100 pt-4">

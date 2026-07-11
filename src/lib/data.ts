@@ -92,3 +92,21 @@ export async function getLeadStats() {
   ]);
   return { total, newLeads, unread };
 }
+
+/**
+ * Get all active ventures, sorted — used by the home page.
+ */
+export async function getVentures() {
+  return db.venture.findMany({
+    where: { isActive: true },
+    orderBy: { sortOrder: "asc" },
+  });
+}
+
+/**
+ * Get ALL ventures (including inactive) — for admin.
+ */
+export async function getAllVentures() {
+  return db.venture.findMany({ orderBy: { sortOrder: "asc" } });
+}
+
