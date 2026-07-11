@@ -11,6 +11,9 @@ import {
   IndianRupee,
   ListChecks,
   Power,
+  Plus,
+  Trash2,
+  X,
 } from "lucide-react";
 import {
   Card,
@@ -26,6 +29,17 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { cn } from "@/lib/utils";
 
 export type CourseRow = {
@@ -48,13 +62,17 @@ type Props = {
 };
 
 export function CoursesEditor({
-  courses,
+  courses: initialCourses,
   instituteLabels,
   instituteOrder,
 }: Props) {
+  const [courses, setCourses] = useState<CourseRow[]>(initialCourses);
   const [drafts, setDrafts] = useState<Record<string, Partial<CourseRow>>>({});
   const [savingId, setSavingId] = useState<string | null>(null);
   const [committed, setCommitted] = useState<Record<string, CourseRow>>({});
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  // Per-institute "add new course" dialog state
+  const [addingInstitute, setAddingInstitute] = useState<string | null>(null);
 
   const grouped = useMemo(() => {
     const map: Record<string, CourseRow[]> = {};
@@ -134,6 +152,68 @@ export function CoursesEditor({
     });
   }
 
+  async function createCourse(institute: string, data: {
+    title: string;
+    code: string;
+    description: string;
+    duration: string;
+    fee: string;
+    syllabus: string;
+  }) {
+    try {
+      const res = await fetch("/api/admin/courses", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: data.title,
+          code: data.code,
+          institute,
+          description: data.description,
+          duration: data.duration,
+          fee: data.fee,
+          syllabus: data.syllabus,
+        }),
+      });
+      if (!res.ok) throw new Error("Create failed");
+      const json = await res.json();
+      const item = json.item as CourseRow;
+      setCourses((prev) => [...prev, item]);
+      toast.success(`Created "${item.title}"`);
+      setAddingInstitute(null);
+    } catch (e) {
+      console.error(e);
+      toast.error("Could not create course. Please try again.");
+    }
+  }
+
+  async function deleteCourse(c: CourseRow) {
+    setDeletingId(c.id);
+    try {
+      const res = await fetch(`/api/admin/courses?id=${c.id}`, {
+        method: "DELETE",
+      });
+      if (!res.ok) throw new Error("Delete failed");
+      setCourses((prev) => prev.filter((x) => x.id !== c.id));
+      // Clean up any draft/committed state for this course
+      setDrafts((prev) => {
+        const next = { ...prev };
+        delete next[c.id];
+        return next;
+      });
+      setCommitted((prev) => {
+        const next = { ...prev };
+        delete next[c.id];
+        return next;
+      });
+      toast.success(`Deleted "${c.title}"`);
+    } catch (e) {
+      console.error(e);
+      toast.error("Could not delete course. Please try again.");
+    } finally {
+      setDeletingId(null);
+    }
+  }
+
   const totalDirty = courses.filter(isDirty).length;
 
   return (
@@ -195,16 +275,35 @@ export function CoursesEditor({
           >
             <Card>
               <CardHeader>
-                <CardTitle className="text-base">{group.label}</CardTitle>
-                <CardDescription>
-                  <code className="rounded bg-muted px-1.5 py-0.5 text-xs">
-                    {group.institute}
-                  </code>{" "}
-                  · {group.courses.length} course
-                  {group.courses.length === 1 ? "" : "s"}
-                </CardDescription>
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                  <div>
+                    <CardTitle className="text-base">{group.label}</CardTitle>
+                    <CardDescription>
+                      <code className="rounded bg-muted px-1.5 py-0.5 text-xs">
+                        {group.institute}
+                      </code>{" "}
+                      · {group.courses.length} course
+                      {group.courses.length === 1 ? "" : "s"}
+                    </CardDescription>
+                  </div>
+                  <Button
+                    size="sm"
+                    onClick={() => setAddingInstitute(group.institute)}
+                    className="gap-1.5 self-start bg-emerald-600 hover:bg-emerald-700 sm:self-auto"
+                  >
+                    <Plus className="size-4" />
+                    Add New Course
+                  </Button>
+                </div>
               </CardHeader>
               <CardContent className="flex flex-col gap-4">
+                {addingInstitute === group.institute && (
+                  <AddCourseForm
+                    institute={group.institute}
+                    onCancel={() => setAddingInstitute(null)}
+                    onCreate={createCourse}
+                  />
+                )}
                 {group.courses.map((raw) => {
                   const c = displayCourse(raw);
                   const dirty = isDirty(raw);
@@ -322,28 +421,67 @@ export function CoursesEditor({
                         </div>
                       </div>
 
-                      <div className="mt-3 flex items-center justify-end gap-1">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          disabled={!dirty || savingId === raw.id}
-                          onClick={() => revert(raw)}
-                        >
-                          Revert
-                        </Button>
-                        <Button
-                          size="sm"
-                          disabled={!dirty || savingId === raw.id}
-                          onClick={() => save(raw)}
-                          className="bg-emerald-600 hover:bg-emerald-700"
-                        >
-                          {savingId === raw.id ? (
-                            <Loader2 className="size-3.5 animate-spin" />
-                          ) : (
-                            <Save className="size-3.5" />
-                          )}
-                          Save
-                        </Button>
+                      <div className="mt-3 flex items-center justify-between gap-1">
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              disabled={deletingId === raw.id}
+                              className="gap-1.5 text-destructive hover:bg-destructive/10 hover:text-destructive"
+                            >
+                              {deletingId === raw.id ? (
+                                <Loader2 className="size-3.5 animate-spin" />
+                              ) : (
+                                <Trash2 className="size-3.5" />
+                              )}
+                              Delete
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Delete course?</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                This will permanently remove &ldquo;{c.title}&rdquo;
+                                ({c.code}) from the {group.label} institute. This
+                                action cannot be undone.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction
+                                onClick={() => deleteCourse(raw)}
+                                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                              >
+                                Delete course
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+
+                        <div className="flex items-center gap-1">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            disabled={!dirty || savingId === raw.id}
+                            onClick={() => revert(raw)}
+                          >
+                            Revert
+                          </Button>
+                          <Button
+                            size="sm"
+                            disabled={!dirty || savingId === raw.id}
+                            onClick={() => save(raw)}
+                            className="bg-emerald-600 hover:bg-emerald-700"
+                          >
+                            {savingId === raw.id ? (
+                              <Loader2 className="size-3.5 animate-spin" />
+                            ) : (
+                              <Save className="size-3.5" />
+                            )}
+                            Save
+                          </Button>
+                        </div>
                       </div>
                     </div>
                   );
@@ -353,6 +491,170 @@ export function CoursesEditor({
           </TabsContent>
         ))}
       </Tabs>
+    </div>
+  );
+}
+
+/** Inline form for creating a new course within a tab */
+function AddCourseForm({
+  institute,
+  onCancel,
+  onCreate,
+}: {
+  institute: string;
+  onCancel: () => void;
+  onCreate: (
+    institute: string,
+    data: {
+      title: string;
+      code: string;
+      description: string;
+      duration: string;
+      fee: string;
+      syllabus: string;
+    }
+  ) => Promise<void> | void;
+}) {
+  const [title, setTitle] = useState("");
+  const [code, setCode] = useState("");
+  const [description, setDescription] = useState("");
+  const [duration, setDuration] = useState("");
+  const [fee, setFee] = useState("");
+  const [syllabus, setSyllabus] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+
+  async function handleSubmit() {
+    if (!title.trim() || !code.trim()) return;
+    setSubmitting(true);
+    try {
+      await onCreate(institute, {
+        title,
+        code,
+        description,
+        duration,
+        fee,
+        syllabus,
+      });
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  return (
+    <div className="rounded-lg border-2 border-dashed border-emerald-300 bg-emerald-50/30 p-4">
+      <div className="mb-3 flex items-center justify-between">
+        <h4 className="flex items-center gap-2 text-sm font-semibold text-emerald-800">
+          <Plus className="size-4" />
+          New Course
+        </h4>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="size-7 text-muted-foreground"
+          onClick={onCancel}
+          aria-label="Cancel"
+        >
+          <X className="size-4" />
+        </Button>
+      </div>
+
+      <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+        <div className="flex flex-col gap-1.5">
+          <Label htmlFor="new-title" className="text-xs">
+            Title <span className="text-destructive">*</span>
+          </Label>
+          <Input
+            id="new-title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="e.g. Diploma in Graphic Design"
+            autoFocus
+          />
+        </div>
+        <div className="flex flex-col gap-1.5">
+          <Label htmlFor="new-code" className="text-xs">
+            Course Code <span className="text-destructive">*</span>
+          </Label>
+          <Input
+            id="new-code"
+            value={code}
+            onChange={(e) => setCode(e.target.value.toUpperCase())}
+            placeholder="e.g. DGD"
+          />
+        </div>
+        <div className="grid grid-cols-2 gap-3">
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="new-duration" className="text-xs">
+              <Clock className="size-3" />
+              Duration
+            </Label>
+            <Input
+              id="new-duration"
+              value={duration}
+              onChange={(e) => setDuration(e.target.value)}
+              placeholder="e.g. 3 Months"
+            />
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="new-fee" className="text-xs">
+              <IndianRupee className="size-3" />
+              Fee
+            </Label>
+            <Input
+              id="new-fee"
+              value={fee}
+              onChange={(e) => setFee(e.target.value)}
+              placeholder="e.g. ₹5,000"
+            />
+          </div>
+        </div>
+        <div className="flex flex-col gap-1.5 md:col-span-2">
+          <Label htmlFor="new-desc" className="text-xs">
+            Description
+          </Label>
+          <Textarea
+            id="new-desc"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            rows={2}
+            className="min-h-[50px]"
+            placeholder="Short description of the course..."
+          />
+        </div>
+        <div className="flex flex-col gap-1.5 md:col-span-2">
+          <Label htmlFor="new-syllabus" className="text-xs">
+            <ListChecks className="size-3" />
+            Syllabus (comma-separated topics)
+          </Label>
+          <Textarea
+            id="new-syllabus"
+            value={syllabus}
+            onChange={(e) => setSyllabus(e.target.value)}
+            rows={2}
+            className="min-h-[60px] font-mono text-sm"
+            placeholder="Topic 1, Topic 2, Topic 3"
+          />
+        </div>
+      </div>
+
+      <div className="mt-3 flex justify-end gap-2">
+        <Button variant="outline" size="sm" onClick={onCancel}>
+          Cancel
+        </Button>
+        <Button
+          size="sm"
+          onClick={handleSubmit}
+          disabled={!title.trim() || !code.trim() || submitting}
+          className="gap-1.5 bg-emerald-600 hover:bg-emerald-700"
+        >
+          {submitting ? (
+            <Loader2 className="size-3.5 animate-spin" />
+          ) : (
+            <Plus className="size-3.5" />
+          )}
+          Create Course
+        </Button>
+      </div>
     </div>
   );
 }
