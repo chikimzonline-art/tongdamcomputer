@@ -6,7 +6,6 @@ import {
   ShieldCheck,
   Trophy,
   Users,
-  LayoutGrid,
   Computer,
   Smartphone,
   GraduationCap,
@@ -22,55 +21,165 @@ import {
   MapPin,
   Mail,
   Briefcase,
+  Check,
+  Wrench,
 } from "lucide-react";
 import { getSiteContentMap } from "@/lib/data";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
-type Department = {
+type Venture = {
   title: string;
   description: string;
   href: string;
   icon: React.ElementType;
+  badge: string;
+  features: string[];
+  courseCount: string;
+  /** Tailwind classes for accent color (bar/icon/badge-bg/badge-text/feature-dot) */
+  accent: {
+    bar: string;
+    iconBg: string;
+    iconText: string;
+    badgeBg: string;
+    badgeText: string;
+    dot: string;
+  };
 };
 
-const DEPARTMENTS: Department[] = [
+const VENTURES: Venture[] = [
   {
     title: "Computer Works",
-    description: "Sales, servicing & maintenance of desktops, laptops and peripherals.",
+    description:
+      "Your trusted center for banking services, Aadhaar, PAN, voter ID, birth certificates, DTP & printing — all in one place.",
     href: "/services/computer-works",
     icon: Computer,
+    badge: "Authorized CSP • UCO Bank",
+    features: [
+      "UCO Bank CSP (Authorized)",
+      "Aadhaar Enrolment & Updates",
+      "PAN Card Services",
+    ],
+    courseCount: "0 Courses Available",
+    accent: {
+      bar: "bg-emerald-500",
+      iconBg: "bg-emerald-50",
+      iconText: "text-emerald-600",
+      badgeBg: "bg-emerald-50",
+      badgeText: "text-emerald-700",
+      dot: "text-emerald-500",
+    },
   },
   {
-    title: "Mobile Hub",
-    description: "Smartphone repairs, accessories, recharges and CSP services.",
-    href: "/services/mobile-hub",
-    icon: Smartphone,
-  },
-  {
-    title: "Computer Training",
-    description: "DCA, ADCA, Tally Prime, Web Development and typing courses.",
+    title: "Tongdam Computer Training Center",
+    description:
+      "Top 1 Institute under E-Max India all over India — providing certified computer education with placement support.",
     href: "/education/computer-training",
     icon: GraduationCap,
+    badge: "Top 1 in India • E-Max India",
+    features: [
+      "Govt. Recognized Certifications",
+      "Top 1 Ranked Institute",
+      "Experienced Faculty",
+    ],
+    courseCount: "6 Courses Available",
+    accent: {
+      bar: "bg-emerald-500",
+      iconBg: "bg-emerald-50",
+      iconText: "text-emerald-600",
+      badgeBg: "bg-emerald-50",
+      badgeText: "text-emerald-700",
+      dot: "text-emerald-500",
+    },
   },
   {
-    title: "Tailoring & Fashion Design",
-    description: "From hand-stitching basics to advanced boutique management.",
+    title: "Tongdam Tailoring Training Center",
+    description:
+      "Professional tailoring training programs designed to empower individuals with a lifelong, income-generating skill.",
     href: "/education/tailoring",
     icon: Scissors,
+    badge: "Skill Development Program",
+    features: [
+      "Basic to Advanced Tailoring",
+      "Pattern Making & Design",
+      "Professional Machine Training",
+    ],
+    courseCount: "4 Courses Available",
+    accent: {
+      bar: "bg-pink-500",
+      iconBg: "bg-pink-50",
+      iconText: "text-pink-600",
+      badgeBg: "bg-pink-50",
+      badgeText: "text-pink-700",
+      dot: "text-pink-500",
+    },
   },
   {
-    title: "Hotel Management",
-    description: "1-year diploma with 100% placement at 5-star hotels pan-India.",
+    title: "Tongdam Institute of Hotel Management",
+    description:
+      "One-year diploma program with guaranteed 100% placement across 5-star hotels all over India.",
     href: "/education/hotel-management",
     icon: Hotel,
+    badge: "100% Placement • 5-Star Hotels",
+    features: [
+      "1-Year Diploma Program",
+      "Front Office Training",
+      "Housekeeping & F&B Service",
+    ],
+    courseCount: "4 Courses Available",
+    accent: {
+      bar: "bg-amber-500",
+      iconBg: "bg-amber-50",
+      iconText: "text-amber-600",
+      badgeBg: "bg-amber-50",
+      badgeText: "text-amber-700",
+      dot: "text-amber-500",
+    },
   },
   {
-    title: "Restaurant",
-    description: "Multi-cuisine dining — appetizers, mains and refreshing drinks.",
+    title: "Tongdam Restaurant",
+    description:
+      "A warm, welcoming dining destination serving delicious local and multi-cuisine dishes made with fresh ingredients.",
     href: "/lifestyle/restaurant",
     icon: Utensils,
+    badge: "Fresh • Local • Welcoming",
+    features: [
+      "Local & Multi-Cuisine Menu",
+      "Fresh Ingredients Daily",
+      "Family-Friendly Atmosphere",
+    ],
+    courseCount: "0 Courses Available",
+    accent: {
+      bar: "bg-amber-500",
+      iconBg: "bg-amber-50",
+      iconText: "text-amber-600",
+      badgeBg: "bg-amber-50",
+      badgeText: "text-amber-700",
+      dot: "text-amber-500",
+    },
+  },
+  {
+    title: "Tongdam Mobile Repairing Center",
+    description:
+      "A service center cum training institute for mobile phone repair — learn a high-demand skill or get your device fixed.",
+    href: "/services/mobile-hub",
+    icon: Wrench,
+    badge: "Repair + Training Center",
+    features: [
+      "All-Brand Mobile Repair",
+      "Chip-Level Repair Training",
+      "Genuine Parts Used",
+    ],
+    courseCount: "3 Courses Available",
+    accent: {
+      bar: "bg-violet-500",
+      iconBg: "bg-violet-50",
+      iconText: "text-violet-600",
+      badgeBg: "bg-violet-50",
+      badgeText: "text-violet-700",
+      dot: "text-violet-500",
+    },
   },
 ];
 
@@ -281,62 +390,95 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ============== DEPARTMENTS ============== */}
+      {/* ============== OUR VENTURES ============== */}
       <section
         id="departments"
-        aria-labelledby="departments-heading"
-        className="scroll-mt-24 bg-gradient-to-b from-white to-emerald-50/40"
+        aria-labelledby="ventures-heading"
+        className="scroll-mt-24 bg-gray-50"
       >
         <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:py-20">
           <div className="mx-auto max-w-2xl text-center">
-            <Badge
-              variant="secondary"
-              className="mb-3 gap-1 border-emerald-200 bg-emerald-100 text-emerald-700"
-            >
-              <LayoutGrid className="size-3.5" aria-hidden="true" />
-              Our Departments
-            </Badge>
+            <p className="text-sm font-medium uppercase tracking-wide text-gray-500">
+              Our Ventures
+            </p>
             <h2
-              id="departments-heading"
-              className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl"
+              id="ventures-heading"
+              className="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl"
             >
-              Six departments, one trusted address
+              A Family of Institutes &amp; Services
             </h2>
-            <p className="mt-4 text-base text-muted-foreground">
-              From computer training to hotel management, mobile repairs to dining —
-              everything you need under the Tongdam roof.
+            <p className="mt-4 text-base text-gray-500">
+              From certified computer training to hotel management, tailoring, mobile
+              repair, and essential citizen services — Tongdam Computers serves the
+              community across multiple disciplines.
             </p>
           </div>
 
-          <div className="mt-12 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {DEPARTMENTS.map((dept) => {
-              const Icon = dept.icon;
+          <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8">
+            {VENTURES.map((v) => {
+              const Icon = v.icon;
               return (
-                <Card
-                  key={dept.href}
-                  className="group relative overflow-hidden border-emerald-100 py-0 transition-all duration-200 hover:-translate-y-1 hover:border-emerald-300 hover:shadow-lg hover:shadow-emerald-100/60"
+                <Link
+                  key={v.href}
+                  href={v.href}
+                  aria-label={`Open ${v.title}`}
+                  className="group relative flex flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/50"
                 >
-                  <Link
-                    href={dept.href}
-                    className="flex h-full flex-col p-6 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/50"
-                    aria-label={`Open ${dept.title}`}
-                  >
-                    <span className="mb-4 flex size-12 items-center justify-center rounded-xl bg-emerald-100 text-emerald-700 transition-colors group-hover:bg-emerald-600 group-hover:text-white">
-                      <Icon className="size-6" aria-hidden="true" />
-                    </span>
-                    <h3 className="text-lg font-semibold text-foreground">{dept.title}</h3>
-                    <p className="mt-2 flex-1 text-sm leading-relaxed text-muted-foreground">
-                      {dept.description}
+                  {/* Top accent bar */}
+                  <span className={`h-1 w-full ${v.accent.bar}`} aria-hidden="true" />
+
+                  <div className="flex flex-1 flex-col p-6">
+                    {/* Icon + Badge row */}
+                    <div className="mb-4 flex items-start justify-between gap-3">
+                      <span
+                        className={`flex size-12 items-center justify-center rounded-lg ${v.accent.iconBg} ${v.accent.iconText}`}
+                      >
+                        <Icon className="size-6" aria-hidden="true" />
+                      </span>
+                      <span
+                        className={`inline-flex items-center rounded-md px-2.5 py-1 text-xs font-medium ${v.accent.badgeBg} ${v.accent.badgeText}`}
+                      >
+                        {v.badge}
+                      </span>
+                    </div>
+
+                    {/* Title + description */}
+                    <h3 className="text-lg font-bold text-gray-900">{v.title}</h3>
+                    <p className="mt-2 text-sm leading-relaxed text-gray-500">
+                      {v.description}
                     </p>
-                    <span className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-emerald-700">
-                      Learn more
-                      <ArrowRight
-                        className="size-4 transition-transform group-hover:translate-x-0.5"
-                        aria-hidden="true"
-                      />
-                    </span>
-                  </Link>
-                </Card>
+
+                    {/* Features list */}
+                    <ul className="mt-4 space-y-2">
+                      {v.features.map((f) => (
+                        <li
+                          key={f}
+                          className="flex items-center gap-2 text-sm text-gray-600"
+                        >
+                          <Check
+                            className={`size-4 shrink-0 ${v.accent.dot}`}
+                            aria-hidden="true"
+                          />
+                          <span>{f}</span>
+                        </li>
+                      ))}
+                    </ul>
+
+                    {/* Footer */}
+                    <div className="mt-6 flex items-center justify-between border-t border-gray-100 pt-4">
+                      <span className="text-sm font-medium text-gray-500">
+                        {v.courseCount}
+                      </span>
+                      <span className="inline-flex items-center gap-1 text-sm font-semibold text-gray-900 transition-colors group-hover:text-emerald-700">
+                        Learn More
+                        <ArrowRight
+                          className="size-4 transition-transform group-hover:translate-x-0.5"
+                          aria-hidden="true"
+                        />
+                      </span>
+                    </div>
+                  </div>
+                </Link>
               );
             })}
           </div>
