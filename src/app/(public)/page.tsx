@@ -17,6 +17,11 @@ import {
   Mail,
   Briefcase,
   Check,
+  Landmark,
+  Fingerprint,
+  Printer,
+  FileText,
+  FileCheck,
 } from "lucide-react";
 import { getSiteContentMap, getVentures } from "@/lib/data";
 import { VENTURE_ICONS, VENTURE_ACCENTS, DEFAULT_ACCENT } from "@/lib/venture-config";
@@ -61,6 +66,137 @@ const TIMELINE = [
   { year: "2022", label: "Public Services", detail: "Aadhaar / PAN / CSP banking added" },
   { year: "2023", label: "Lifestyle Hub", detail: "Restaurant & tailoring launched" },
   { year: "2024", label: "Top 1 Institute", detail: "Ranked #1 E-Max institute nationwide" },
+];
+
+type EssentialService = {
+  title: string;
+  description: string;
+  icon: React.ElementType;
+  services: string[];
+  extraCount: number;
+  accent: {
+    iconBg: string;
+    iconText: string;
+    dot: string;
+    link: string;
+  };
+};
+
+const ESSENTIAL_SERVICES: EssentialService[] = [
+  {
+    title: "CSP UCO Bank Services",
+    description:
+      "As an authorized Customer Service Point (CSP) for UCO Bank, we bring essential banking services closer to your doorstep.",
+    icon: Landmark,
+    services: [
+      "Account Opening (Savings/Current)",
+      "Cash Deposit & Withdrawal",
+      "Money Transfer (NEFT/RTGS/IMPS)",
+      "Social Security Schemes (PMJJBY, PMSBY, APY)",
+    ],
+    extraCount: 2,
+    accent: {
+      iconBg: "bg-emerald-500",
+      iconText: "text-white",
+      dot: "text-emerald-500",
+      link: "text-emerald-600",
+    },
+  },
+  {
+    title: "Aadhaar Services",
+    description:
+      "Comprehensive Aadhaar related services to ensure your identification documents are always up to date.",
+    icon: Fingerprint,
+    services: [
+      "PVC Card Printing (Smart Card)",
+      "Biometric Updates (Photo, Fingerprint, Iris)",
+      "Demographic Updates (Name, Address, DOB)",
+      "New Enrolment Assistance",
+    ],
+    extraCount: 2,
+    accent: {
+      iconBg: "bg-amber-500",
+      iconText: "text-white",
+      dot: "text-amber-500",
+      link: "text-amber-600",
+    },
+  },
+  {
+    title: "DTP & Printing Works",
+    description:
+      "Professional desktop publishing and high-quality printing services for all your personal and business needs.",
+    icon: Printer,
+    services: [
+      "Resume / CV Creation",
+      "English, Hindi & Local Language Typing",
+      "High Speed Xerox (B&W / Color)",
+      "Passport Size Photos (Urgent)",
+    ],
+    extraCount: 2,
+    accent: {
+      iconBg: "bg-pink-500",
+      iconText: "text-white",
+      dot: "text-pink-500",
+      link: "text-pink-600",
+    },
+  },
+  {
+    title: "PAN Card Services",
+    description:
+      "Hassle-free PAN card services for individuals and businesses with quick processing and support.",
+    icon: FileText,
+    services: [
+      "New PAN Card Application",
+      "Correction in Existing PAN",
+      "Lost PAN Card Recovery",
+      "Link PAN with Aadhaar",
+    ],
+    extraCount: 2,
+    accent: {
+      iconBg: "bg-violet-500",
+      iconText: "text-white",
+      dot: "text-violet-500",
+      link: "text-violet-600",
+    },
+  },
+  {
+    title: "Voter Card Services",
+    description:
+      "Get your Voter ID card updated or apply for a new one with our complete assistance.",
+    icon: IdCard,
+    services: [
+      "New Voter Registration",
+      "Correction of Name/Address",
+      "Constituency Transposition",
+      "Digital Voter ID Download",
+    ],
+    extraCount: 2,
+    accent: {
+      iconBg: "bg-emerald-500",
+      iconText: "text-white",
+      dot: "text-emerald-500",
+      link: "text-emerald-600",
+    },
+  },
+  {
+    title: "Birth Certificate",
+    description:
+      "Assistance with Birth Certificate applications and corrections with complete documentation support.",
+    icon: FileCheck,
+    services: [
+      "New Birth Certificate Application",
+      "Delayed Registration Assistance",
+      "Corrections and Updates",
+      "Death Certificate Services",
+    ],
+    extraCount: 2,
+    accent: {
+      iconBg: "bg-amber-500",
+      iconText: "text-white",
+      dot: "text-amber-500",
+      link: "text-amber-600",
+    },
+  },
 ];
 
 export default async function HomePage() {
@@ -331,6 +467,95 @@ export default async function HomePage() {
                 </Link>
               );
             })}
+          </div>
+        </div>
+      </section>
+
+      {/* ============== ESSENTIAL CITIZEN & DIGITAL SERVICES ============== */}
+      <section
+        aria-labelledby="essential-heading"
+        className="bg-gray-50 py-16 lg:py-20"
+      >
+        <div className="mx-auto max-w-7xl px-4 sm:px-6">
+          <div className="mx-auto max-w-3xl text-center">
+            <p className="text-sm font-medium uppercase tracking-wide text-emerald-600">
+              Computer Works
+            </p>
+            <h2
+              id="essential-heading"
+              className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl"
+            >
+              <span className="text-gray-900">Essential </span>
+              <span className="text-amber-500">Citizen &amp; Digital Services</span>
+            </h2>
+            <p className="mt-4 text-base text-gray-500">
+              Your trusted center for banking services, Aadhaar, PAN, voter ID,
+              birth certificates, DTP &amp; printing — all in one place.
+            </p>
+          </div>
+
+          <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {ESSENTIAL_SERVICES.map((s) => {
+              const Icon = s.icon;
+              return (
+                <div
+                  key={s.title}
+                  className="flex flex-col rounded-lg border border-gray-200 bg-white p-6 shadow-sm transition-shadow hover:shadow-md"
+                >
+                  {/* Icon */}
+                  <span
+                    className={`mb-4 flex size-12 items-center justify-center rounded-full ${s.accent.iconBg} ${s.accent.iconText}`}
+                  >
+                    <Icon className="size-6" aria-hidden="true" />
+                  </span>
+
+                  {/* Title + description */}
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    {s.title}
+                  </h3>
+                  <p className="mt-2 text-sm leading-relaxed text-gray-500">
+                    {s.description}
+                  </p>
+
+                  {/* Services list */}
+                  <ul className="mt-4 space-y-2">
+                    {s.services.map((item) => (
+                      <li
+                        key={item}
+                        className="flex items-center gap-2 text-sm text-gray-600"
+                      >
+                        <span
+                          className={`size-1.5 shrink-0 rounded-full ${s.accent.iconBg}`}
+                          aria-hidden="true"
+                        />
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  {/* "+N more services" link */}
+                  {s.extraCount > 0 && (
+                    <Link
+                      href="/services/computer-works"
+                      className={`mt-3 text-sm font-medium hover:underline ${s.accent.link}`}
+                    >
+                      +{s.extraCount} more services
+                    </Link>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+
+          {/* View all link */}
+          <div className="mt-10 text-center">
+            <Link
+              href="/services/computer-works"
+              className="inline-flex items-center gap-1.5 text-base font-medium text-emerald-600 hover:text-emerald-700 hover:underline"
+            >
+              View all Computer Works services
+              <ArrowRight className="size-4" aria-hidden="true" />
+            </Link>
           </div>
         </div>
       </section>
