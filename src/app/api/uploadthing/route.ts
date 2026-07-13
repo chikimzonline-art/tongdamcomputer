@@ -13,6 +13,8 @@ export const { GET, POST } = createRouteHandler({
      */
     callbackUrl:
       process.env.UPLOADTHING_CALLBACK_URL ??
-      "http://localhost:3000/api/uploadthing",
+      (process.env.NODE_ENV === "development"
+        ? "http://localhost:3000/api/uploadthing"
+        : undefined),
   },
 });
