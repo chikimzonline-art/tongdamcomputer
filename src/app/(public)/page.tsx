@@ -28,6 +28,7 @@ import { VENTURE_ICONS, VENTURE_ACCENTS, DEFAULT_ACCENT } from "@/lib/venture-co
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { AffiliationCarousel } from "@/components/site/affiliation-carousel";
 
 const STATS = [
   { label: "Business Ventures", value: "6+", icon: Briefcase },
@@ -696,6 +697,35 @@ export default async function HomePage() {
                 </ol>
               </CardContent>
             </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* ============== AFFILIATIONS & BRAND PARTNERS ============== */}
+      <section
+        aria-labelledby="affiliations-heading"
+        className="bg-gradient-to-b from-white to-gray-50 py-16 lg:py-20"
+      >
+        <div className="mx-auto max-w-7xl px-4 sm:px-6">
+          <div className="mx-auto max-w-2xl text-center">
+            <p className="text-sm font-medium uppercase tracking-wide text-emerald-600">
+              Trusted &amp; Recognized
+            </p>
+            <h2
+              id="affiliations-heading"
+              className="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl"
+            >
+              Our Affiliations &amp; Brand Partners
+            </h2>
+            <p className="mt-4 text-base text-gray-500">
+              From government-recognized education affiliations to 5-star hotel
+              placement partners — our network ensures your certifications and
+              skills are valued everywhere.
+            </p>
+          </div>
+
+          <div className="mt-12">
+            <AffiliationCarousel />
           </div>
         </div>
       </section>
