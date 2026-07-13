@@ -367,14 +367,14 @@ export function AboutEditor({ content: initialContent, milestones: initialMilest
                   : "No image set — using initials placeholder."}
               </p>
               <div className="mt-2 flex flex-wrap gap-2">
-                <UTUploadButton
+                <UTUploadButton<OurFileRouter, "assetUploader">
                   endpoint="assetUploader"
                   onClientUploadComplete={(res) => {
                     if (res && res.length > 0) {
                       void saveFounderImage(res[0].url);
                     }
                   }}
-                  onUploadError={(err) => toast.error(err.message)}
+                  onUploadError={(err) => { toast.error(err.message); }}
                   appearance={{
                     button: "data-[state=ready]:bg-emerald-600 data-[state=ready]:text-white data-[state=ready]:hover:bg-emerald-700 data-[state=uploading]:bg-emerald-700/80 data-[state=uploading]:text-white data-[state=uploading]:cursor-not-allowed rounded-md px-3 py-1.5 text-xs font-medium transition-colors cursor-pointer",
                     container: "flex flex-col items-stretch",

@@ -213,6 +213,8 @@ function moduleFor(topic: string): SyllabusModule {
   );
 }
 
+export const revalidate = 300;
+
 export default async function HotelManagementPage() {
   const [courses, content] = await Promise.all([
     getCourses("hotel-management"),

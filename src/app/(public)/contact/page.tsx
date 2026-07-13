@@ -22,6 +22,8 @@ type ContactCard = {
   hint?: string;
 };
 
+export const revalidate = 300;
+
 export default async function ContactPage() {
   const content = await getSiteContentMap();
   const phone1 = content["contact.phone1"] ?? "+91 98765 43210";
@@ -39,9 +41,13 @@ export default async function ContactPage() {
   const mapHeading = content["contact.mapHeading"] ?? "On the map";
   const mapSubtitle = content["contact.mapSubtitle"] ?? "We're located in the heart of Churachandpur, Manipur.";
 
-  const mapSrc =
-    content["contact.mapEmbedUrl"] ??
+  let mapSrc =
+    content["contact.mapEmbedUrl"]?.trim() ||
     "https://www.google.com/maps?q=Churachandpur,Manipur,India&output=embed";
+  
+  if (!mapSrc.startsWith("https://www.google.com/maps")) {
+    mapSrc = "https://www.google.com/maps?q=Churachandpur,Manipur,India&output=embed";
+  }
 
   const contactCards: ContactCard[] = [
     {
@@ -251,6 +257,7 @@ export default async function ContactPage() {
                       loading="lazy"
                       referrerPolicy="no-referrer-when-downgrade"
                       className="absolute inset-0 size-full border-0"
+                      sandbox="allow-scripts allow-same-origin"
                       allowFullScreen
                     />
                   </div>

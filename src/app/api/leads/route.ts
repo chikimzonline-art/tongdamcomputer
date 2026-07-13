@@ -1,12 +1,37 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { rateLimit, getClientIp } from "@/lib/rate-limit";
 
 /**
  * POST /api/leads
  * Public endpoint - accepts lead submissions from any form on the site.
  * Body: { name, email?, phone, source, subject, message }
+ *
+ * Rate limited to 5 requests per minute per IP to prevent spam/abuse.
  */
 export async function POST(req: NextRequest) {
+  // --- Rate limiting ---
+  const ip = getClientIp(req);
+  const { limited, remaining, resetAt } = rateLimit(ip, {
+    limit: 5,
+    windowMs: 60_000, // 1 minute
+  });
+
+  if (limited) {
+    const retryAfterSeconds = Math.ceil((resetAt - Date.now()) / 1000);
+    return NextResponse.json(
+      { ok: false, error: "Too many requests. Please wait a moment before trying again." },
+      {
+        status: 429,
+        headers: {
+          "Retry-After": String(retryAfterSeconds),
+          "X-RateLimit-Limit": "5",
+          "X-RateLimit-Remaining": "0",
+        },
+      }
+    );
+  }
+
   try {
     const body = await req.json();
     const { name, email, phone, source, subject, message } = body;
@@ -29,7 +54,15 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    return NextResponse.json({ ok: true, id: lead.id });
+    return NextResponse.json(
+      { ok: true, id: lead.id },
+      {
+        headers: {
+          "X-RateLimit-Limit": "5",
+          "X-RateLimit-Remaining": String(remaining),
+        },
+      }
+    );
   } catch (e) {
     console.error("Lead create error:", e);
     return NextResponse.json(

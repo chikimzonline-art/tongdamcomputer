@@ -1,11 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { requireAdmin } from "@/lib/require-admin";
 import { UTApi } from "uploadthing/server";
-
-async function requireAdmin() {
-  return await getServerSession(authOptions);
-}
 
 /**
  * GET /api/admin/uploadthing/files

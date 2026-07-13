@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import {
   Menu,
   Cpu,
@@ -101,10 +102,14 @@ export function SiteHeader({ logoUrl = "" }: { logoUrl?: string }) {
     <>
       {logoUrl ? (
          
-        <img
+        <Image
           src={logoUrl}
           alt="Tongdam Computers logo"
+          height={36}
+          width={140}
           className="h-9 w-auto max-w-[140px] object-contain"
+          priority
+          unoptimized
         />
       ) : (
         <span className="flex size-9 items-center justify-center rounded-lg bg-emerald-600 text-white shadow-sm">

@@ -10,6 +10,7 @@ import {
   MapPin,
   Mail,
   Check,
+  Computer,
 } from "lucide-react";
 import { getSiteContentMap, getVentures, getAffiliations, getStats, getQuickActions, getEssentialServices, getMilestones } from "@/lib/data";
 import { VENTURE_ICONS, VENTURE_ACCENTS, DEFAULT_ACCENT } from "@/lib/venture-config";
@@ -19,14 +20,27 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { AffiliationCarousel } from "@/components/site/affiliation-carousel";
 
+export const revalidate = 60;
+
+
 export default async function HomePage() {
-  const content = await getSiteContentMap();
-  const ventures = await getVentures();
-  const affiliationRows = await getAffiliations();
-  const statRows = await getStats();
-  const quickActionRows = await getQuickActions();
-  const essentialServiceRows = await getEssentialServices();
-  const milestones = await getMilestones();
+  const [
+    content,
+    ventures,
+    affiliationRows,
+    statRows,
+    quickActionRows,
+    essentialServiceRows,
+    milestones,
+  ] = await Promise.all([
+    getSiteContentMap(),
+    getVentures(),
+    getAffiliations(),
+    getStats(),
+    getQuickActions(),
+    getEssentialServices(),
+    getMilestones(),
+  ]);
   const affiliations = affiliationRows.map((a) => ({
     id: a.id,
     name: a.name,

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback, useEffect, useRef } from "react";
+import Image from "next/image";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -176,11 +177,14 @@ export function GalleryGrid({ sections, allImages }: Props) {
                   className="group relative block w-full break-inside-avoid overflow-hidden rounded-lg border border-gray-200 bg-gray-100 transition-all hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/60"
                   aria-label={`Open ${img.caption || img.name}`}
                 >
-                  <img
+                  <Image
                     src={img.url}
                     alt={img.alt || img.caption || img.name}
-                    loading="lazy"
-                    className="w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                    width={0}
+                    height={0}
+                    sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                    style={{ width: "100%", height: "auto" }}
+                    className="object-cover transition-transform duration-300 group-hover:scale-105"
                   />
                   {img.caption && (
                     <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-2 text-left text-xs font-medium text-white opacity-0 transition-opacity group-hover:opacity-100">
@@ -225,10 +229,14 @@ export function GalleryGrid({ sections, allImages }: Props) {
             className="flex max-h-full max-w-5xl flex-col items-center"
             onClick={(e) => e.stopPropagation()}
           >
-            <img
+            <Image
               src={allImages[openIndex].url}
               alt={allImages[openIndex].alt || allImages[openIndex].caption || allImages[openIndex].name}
-              className="max-h-[82vh] max-w-full rounded-lg object-contain"
+              width={0}
+              height={0}
+              sizes="100vw"
+              style={{ width: "auto", height: "auto", maxHeight: "82vh", maxWidth: "100%" }}
+              className="rounded-lg object-contain"
             />
             {allImages[openIndex].caption && (
               <figcaption className="mt-3 text-center text-sm text-white/80">

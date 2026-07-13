@@ -339,7 +339,7 @@ export function GalleryEditor({ images: initial, albums: initialAlbums }: Props)
                 </SelectContent>
               </Select>
             </div>
-            <UTUploadButton
+            <UTUploadButton<OurFileRouter, "galleryUploader">
               endpoint="galleryUploader"
               input={{ albumId: selectedAlbumId || null }}
               onClientUploadComplete={(res) => {

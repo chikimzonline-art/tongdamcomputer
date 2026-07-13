@@ -1,7 +1,7 @@
 import { getGalleryImages, getGalleryAlbums } from "@/lib/data";
 import { GalleryGrid } from "@/components/site/gallery-grid";
 
-export const revalidate = 60;
+export const revalidate = 300;
 
 export default async function GalleryPage() {
   const [rows, albums] = await Promise.all([

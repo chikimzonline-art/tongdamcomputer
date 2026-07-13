@@ -131,6 +131,8 @@ function splitSyllabus(syllabus: string | null | undefined): string[] {
     .filter(Boolean);
 }
 
+export const revalidate = 300;
+
 export default async function TailoringPage() {
   const courses = await getCourses("tailoring");
 

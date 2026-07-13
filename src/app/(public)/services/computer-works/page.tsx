@@ -149,6 +149,8 @@ const HERO_BADGES = [
   { label: "Multilingual Support", icon: Languages },
 ];
 
+export const revalidate = 300;
+
 export default async function ComputerWorksPage() {
   const content = await getSiteContentMap();
   const phone = content["contact.phone1"] ?? "";

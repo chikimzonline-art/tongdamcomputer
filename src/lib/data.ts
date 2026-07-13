@@ -1,15 +1,18 @@
+import { cache } from "react";
 import { db } from "@/lib/db";
 
 /**
  * Fetch all active site content as a key->value map.
  * Used by SSR pages to render CMS-managed text.
  */
-export async function getSiteContentMap(): Promise<Record<string, string>> {
-  const rows = await db.siteContent.findMany();
-  const map: Record<string, string> = {};
-  for (const r of rows) map[r.key] = r.value;
-  return map;
-}
+export const getSiteContentMap = cache(
+  async (): Promise<Record<string, string>> => {
+    const rows = await db.siteContent.findMany();
+    const map: Record<string, string> = {};
+    for (const r of rows) map[r.key] = r.value;
+    return map;
+  }
+);
 
 /**
  * Get a single content value by key (falls back to empty string).

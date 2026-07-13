@@ -112,7 +112,7 @@ const QUICK_INFO = [
  * 3. Final fallback: first three items overall.
  */
 function pickSpecials(
-  grouped: Record<string, Array<{ name: string; description?: string; price: string; isVeg: boolean }>>,
+  grouped: Record<string, Array<{ name: string; description?: string | null; price: string; isVeg: boolean }>>,
 ) {
   const all = Object.values(grouped).flat();
   if (all.length === 0) return [];
@@ -143,7 +143,7 @@ function pickSpecials(
 
   return picks.slice(0, 3).map((item) => ({
     name: item.name,
-    description: item.description ?? "",
+    description: item.description ?? undefined,
     price: item.price,
     isVeg: item.isVeg,
   }));

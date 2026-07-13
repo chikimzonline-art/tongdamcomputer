@@ -232,6 +232,9 @@ model GalleryImage {
   isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([albumId])
+  @@index([isActive, sortOrder])
 }
 
 // ============================================================

@@ -1,4 +1,4 @@
-import { scryptSync, randomBytes } from "crypto";
+import { scryptSync, randomBytes, timingSafeEqual } from "crypto";
 
 /**
  * Hash a password using Node's built-in scrypt (no external deps).
@@ -16,5 +16,8 @@ export function verifyPassword(password: string, stored: string): boolean {
   const [salt, hash] = stored.split(":");
   if (!salt || !hash) return false;
   const testHash = scryptSync(password, salt, 64).toString("hex");
-  return testHash === hash;
+  const testBuf = Buffer.from(testHash, "hex");
+  const storedBuf = Buffer.from(hash, "hex");
+  if (testBuf.length !== storedBuf.length) return false;
+  return timingSafeEqual(testBuf, storedBuf);
 }

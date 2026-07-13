@@ -98,6 +98,8 @@ function splitSyllabus(syllabus: string | null | undefined): string[] {
     .filter(Boolean);
 }
 
+export const revalidate = 300;
+
 export default async function ComputerTrainingPage() {
   const [courses, content] = await Promise.all([
     getCourses("computer-training"),

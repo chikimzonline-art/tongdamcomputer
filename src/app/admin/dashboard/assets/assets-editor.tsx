@@ -102,7 +102,7 @@ export function AssetsEditor({ logoUrl: initialLogo, faviconUrl: initialFavicon 
           )}
 
           {/* Upload */}
-          <UTUploadButton
+          <UTUploadButton<OurFileRouter, "assetUploader">
             endpoint="assetUploader"
             onClientUploadComplete={(res) => {
               if (res && res.length > 0) {
@@ -200,7 +200,7 @@ export function AssetsEditor({ logoUrl: initialLogo, faviconUrl: initialFavicon 
           </p>
 
           {/* Upload */}
-          <UTUploadButton
+          <UTUploadButton<OurFileRouter, "assetUploader">
             endpoint="assetUploader"
             onClientUploadComplete={(res) => {
               if (res && res.length > 0) {

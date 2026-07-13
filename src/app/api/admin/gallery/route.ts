@@ -1,12 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { requireAdmin } from "@/lib/require-admin";
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
+import { UTApi } from "uploadthing/server";
 
-async function requireAdmin() {
-  return await getServerSession(authOptions);
-}
+const utapi = new UTApi();
 
 /**
  * GET /api/admin/gallery  - list all gallery images
@@ -56,6 +54,16 @@ export async function DELETE(req: NextRequest) {
   const id = searchParams.get("id");
   if (!id)
     return NextResponse.json({ error: "Missing id" }, { status: 400 });
+
+  const image = await db.galleryImage.findUnique({ where: { id } });
+  if (image?.key) {
+    try {
+      await utapi.deleteFiles(image.key);
+    } catch (e) {
+      console.error("Failed to delete file from UploadThing:", e);
+    }
+  }
+
   await db.galleryImage.delete({ where: { id } });
   revalidatePath("/", "layout");
   return NextResponse.json({ ok: true });

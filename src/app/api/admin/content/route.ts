@@ -1,18 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { requireAdmin } from "@/lib/require-admin";
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
-
-/**
- * GET /api/admin/content  - list all site content
- * PUT /api/admin/content  - upsert a content key
- */
-async function requireAdmin() {
-  const session = await getServerSession(authOptions);
-  if (!session) return null;
-  return session;
-}
 
 export async function GET() {
   if (!(await requireAdmin()))

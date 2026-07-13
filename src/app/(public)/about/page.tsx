@@ -17,6 +17,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
+export const revalidate = 300;
+
 export default async function AboutPage() {
   const content = await getSiteContentMap();
   const milestones = await getMilestones();

@@ -1,12 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { requireAdmin } from "@/lib/require-admin";
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
-
-async function requireAdmin() {
-  return await getServerSession(authOptions);
-}
 
 function serializeServices(services: unknown): string {
   if (Array.isArray(services)) {
