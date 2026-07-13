@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { toast } from "sonner";
 import { UploadButton as UTUploadButton } from "@uploadthing/react";
-import "@uploadthing/react/styles.css";
 import type { OurFileRouter } from "@/uploadthing";
 import { Trash2, Eye, EyeOff, Loader2, ImageIcon } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
@@ -170,7 +169,7 @@ export function GalleryEditor({ images: initial }: Props) {
               }}
               appearance={{
                 button:
-                  "ut-ready:bg-emerald-600 ut-ready:text-white ut-ready:hover:bg-emerald-700 ut-uploading:bg-emerald-700/80 ut-uploading:text-white ut-uploading:cursor-not-allowed rounded-md px-4 py-2 text-sm font-medium transition-colors cursor-pointer",
+                  "data-[state=ready]:bg-emerald-600 data-[state=ready]:text-white data-[state=ready]:hover:bg-emerald-700 data-[state=uploading]:bg-emerald-700/80 data-[state=uploading]:text-white data-[state=uploading]:cursor-not-allowed data-[state=readying]:bg-emerald-400 data-[state=readying]:text-white rounded-md px-4 py-2 text-sm font-medium transition-colors cursor-pointer",
                 container: "flex flex-col items-center gap-2 w-full",
                 allowedContent: "hidden",
               }}
