@@ -42,6 +42,7 @@ const DEPARTMENTS = [
  */
 export async function SiteFooter() {
   const content = await getSiteContentMap();
+  const logoUrl = content["site.logoUrl"] ?? "";
   const phone1 = content["contact.phone1"] ?? "";
   const phone2 = content["contact.phone2"] ?? "";
   const email = content["contact.email"] ?? "";
@@ -59,9 +60,17 @@ export async function SiteFooter() {
           {/* Brand column */}
           <div className="sm:col-span-2 lg:col-span-1">
             <Link href="/" className="flex items-center gap-2.5" aria-label="Tongdam Computers — Home">
-              <span className="flex size-9 items-center justify-center rounded-lg bg-emerald-600 text-white">
-                <Cpu className="size-5" aria-hidden="true" />
-              </span>
+              {logoUrl ? (
+                <img
+                  src={logoUrl}
+                  alt="Tongdam Computers logo"
+                  className="h-9 w-auto max-w-[140px] object-contain bg-white/10 p-1 rounded"
+                />
+              ) : (
+                <span className="flex size-9 items-center justify-center rounded-lg bg-emerald-600 text-white">
+                  <Cpu className="size-5" aria-hidden="true" />
+                </span>
+              )}
               <span className="text-base font-bold tracking-tight">Tongdam Computers</span>
             </Link>
             <p className="mt-3 text-sm leading-relaxed text-emerald-100/80">
@@ -176,8 +185,7 @@ export async function SiteFooter() {
         {/* Bottom bar */}
         <div className="mt-10 flex flex-col gap-3 border-t border-emerald-900/80 pt-6 text-xs text-emerald-200/70 sm:flex-row sm:items-center sm:justify-between">
           <p className="leading-relaxed">
-            © {foundedYear === "2020" ? "2020" : "2024"} Tongdam Computers.
-            Founded by {founder}. All rights reserved.
+            © {foundedYear === "2020" ? "2020" : "2024"} Tongdam Computers. All rights reserved.
           </p>
           <p className="flex items-center gap-1">
             <span>An E-Max India certified enterprise</span>
