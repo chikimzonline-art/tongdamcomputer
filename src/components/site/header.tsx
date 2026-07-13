@@ -89,11 +89,30 @@ const NAV_GROUPS: NavGroup[] = [
 
 const DIRECT_LINKS: { label: string; href: string }[] = [
   { label: "About Us", href: "/about" },
+  { label: "Gallery", href: "/gallery" },
   { label: "Contact", href: "/contact" },
 ];
 
-export function SiteHeader() {
+export function SiteHeader({ logoUrl = "" }: { logoUrl?: string }) {
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  // Logo markup: use uploaded image if set, otherwise the default Cpu icon tile.
+  const LogoMark = (
+    <>
+      {logoUrl ? (
+         
+        <img
+          src={logoUrl}
+          alt="Tongdam Computers logo"
+          className="h-9 w-auto max-w-[140px] object-contain"
+        />
+      ) : (
+        <span className="flex size-9 items-center justify-center rounded-lg bg-emerald-600 text-white shadow-sm">
+          <Cpu className="size-5" aria-hidden="true" />
+        </span>
+      )}
+    </>
+  );
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-emerald-100 bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -104,9 +123,7 @@ export function SiteHeader() {
           className="flex items-center gap-2.5 rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/60"
           aria-label="Tongdam Computers — Home"
         >
-          <span className="flex size-9 items-center justify-center rounded-lg bg-emerald-600 text-white shadow-sm">
-            <Cpu className="size-5" aria-hidden="true" />
-          </span>
+          {LogoMark}
           <span className="flex flex-col leading-tight">
             <span className="text-base font-bold tracking-tight text-foreground">
               Tongdam Computers
@@ -208,9 +225,7 @@ export function SiteHeader() {
             >
               <SheetTitle className="sr-only">Tongdam Computers navigation</SheetTitle>
               <div className="flex items-center gap-2.5 border-b border-emerald-100 px-5 py-4">
-                <span className="flex size-9 items-center justify-center rounded-lg bg-emerald-600 text-white">
-                  <Cpu className="size-5" aria-hidden="true" />
-                </span>
+                {LogoMark}
                 <span className="flex flex-col leading-tight">
                   <span className="text-base font-bold text-foreground">
                     Tongdam Computers

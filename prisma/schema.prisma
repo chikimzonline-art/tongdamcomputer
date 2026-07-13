@@ -140,3 +140,22 @@ model Affiliation {
   updatedAt   DateTime @updatedAt
   createdAt   DateTime @default(now())
 }
+
+// ============================================================
+// GALLERY - Images uploaded via UploadThing, shown on /gallery
+// ============================================================
+
+model GalleryImage {
+  id        String   @id @default(cuid())
+  url       String
+  key       String
+  name      String
+  alt       String   @default("")
+  caption   String   @default("")
+  width     Int      @default(0)
+  height    Int      @default(0)
+  sortOrder Int      @default(0)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

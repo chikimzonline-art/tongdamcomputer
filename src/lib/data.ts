@@ -127,3 +127,20 @@ export async function getAffiliations() {
 export async function getAllAffiliations() {
   return db.affiliation.findMany({ orderBy: { sortOrder: "asc" } });
 }
+
+/**
+ * Get all active gallery images, sorted — used by the public /gallery page.
+ */
+export async function getGalleryImages() {
+  return db.galleryImage.findMany({
+    where: { isActive: true },
+    orderBy: { sortOrder: "asc" },
+  });
+}
+
+/**
+ * Get ALL gallery images (including inactive) — for admin.
+ */
+export async function getAllGalleryImages() {
+  return db.galleryImage.findMany({ orderBy: { sortOrder: "asc" } });
+}
