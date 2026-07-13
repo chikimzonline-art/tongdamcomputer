@@ -4,9 +4,10 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { UploadButton as UTUploadButton } from "@uploadthing/react";
 import type { OurFileRouter } from "@/uploadthing";
-import { Trash2, Loader2, Check, Image as ImageIcon } from "lucide-react";
+import { Trash2, Loader2, Check, Image as ImageIcon, FolderOpen } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { ExistingFilePicker } from "@/components/admin/existing-file-picker";
 
 type Props = {
   logoUrl: string;
@@ -18,6 +19,7 @@ export function AssetsEditor({ logoUrl: initialLogo, faviconUrl: initialFavicon 
   const [faviconUrl, setFaviconUrl] = useState(initialFavicon);
   const [savingLogo, setSavingLogo] = useState(false);
   const [savingFavicon, setSavingFavicon] = useState(false);
+  const [pickerFor, setPickerFor] = useState<null | "logo" | "favicon">(null);
 
   async function saveAsset(key: "site.logoUrl" | "site.faviconUrl", url: string) {
     const isLogo = key === "site.logoUrl";
@@ -126,6 +128,17 @@ export function AssetsEditor({ logoUrl: initialLogo, faviconUrl: initialFavicon 
             }}
           />
 
+          {/* Select from existing uploads */}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setPickerFor("logo")}
+            className="w-full gap-1.5"
+          >
+            <FolderOpen className="size-3.5" />
+            Select from existing uploads
+          </Button>
+
           {logoUrl && (
             <Button
               variant="ghost"
@@ -213,6 +226,17 @@ export function AssetsEditor({ logoUrl: initialLogo, faviconUrl: initialFavicon 
             }}
           />
 
+          {/* Select from existing uploads */}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setPickerFor("favicon")}
+            className="w-full gap-1.5"
+          >
+            <FolderOpen className="size-3.5" />
+            Select from existing uploads
+          </Button>
+
           {faviconUrl && (
             <Button
               variant="ghost"
@@ -234,6 +258,23 @@ export function AssetsEditor({ logoUrl: initialLogo, faviconUrl: initialFavicon 
           )}
         </CardContent>
       </Card>
+
+      {/* Existing file picker dialog — shared by logo & favicon */}
+      <ExistingFilePicker
+        open={pickerFor !== null}
+        onClose={() => setPickerFor(null)}
+        excludeUrl={pickerFor === "logo" ? logoUrl : faviconUrl}
+        onSelect={(url, name) => {
+          if (pickerFor === "logo") {
+            setLogoUrl(url);
+            void saveAsset("site.logoUrl", url);
+          } else if (pickerFor === "favicon") {
+            setFaviconUrl(url);
+            void saveAsset("site.faviconUrl", url);
+          }
+          toast.success(`Selected "${name}"`);
+        }}
+      />
     </div>
   );
 }
