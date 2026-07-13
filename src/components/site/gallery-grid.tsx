@@ -2,7 +2,6 @@
 
 import { useState, useCallback, useEffect } from "react";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
-import { cn } from "@/lib/utils";
 
 type GalleryItem = {
   id: string;
@@ -59,24 +58,20 @@ export function GalleryGrid({ images }: Props) {
 
   return (
     <>
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4">
+      {/* Masonry layout using CSS columns — images keep their natural aspect ratios */}
+      <div className="columns-2 gap-3 sm:columns-3 sm:gap-4 lg:columns-4 [&>*]:mb-3 sm:[&>*]:mb-4">
         {images.map((img, i) => (
           <button
             key={img.id}
             onClick={() => setOpenIndex(i)}
-            className={cn(
-              "group relative aspect-square overflow-hidden rounded-lg border border-gray-200 bg-gray-100 transition-all hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/60",
-              // Make the first tile span 2x2 on larger screens for visual interest
-              i === 0 && "sm:col-span-2 sm:row-span-2"
-            )}
+            className="group relative block w-full break-inside-avoid overflow-hidden rounded-lg border border-gray-200 bg-gray-100 transition-all hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/60"
             aria-label={`Open ${img.caption || img.name}`}
           >
-            { }
             <img
               src={img.url}
               alt={img.alt || img.caption || img.name}
               loading="lazy"
-              className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+              className="w-full object-cover transition-transform duration-300 group-hover:scale-105"
             />
             {img.caption && (
               <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-2 text-left text-xs font-medium text-white opacity-0 transition-opacity group-hover:opacity-100">
