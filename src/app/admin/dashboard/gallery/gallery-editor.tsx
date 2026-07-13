@@ -180,10 +180,6 @@ export function GalleryEditor({ images: initial }: Props) {
                 },
               }}
             />
-            <p className="text-xs text-amber-700">
-              ℹ️ Uploads require a valid <code>UPLOADTHING_SECRET</code> in{" "}
-              <code>.env</code>. If not set, the button will show an error.
-            </p>
           </div>
         </CardContent>
       </Card>
