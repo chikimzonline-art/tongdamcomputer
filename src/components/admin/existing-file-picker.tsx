@@ -22,10 +22,17 @@ type UTFile = {
   url: string | null;
 };
 
+type SelectedFile = {
+  url: string;
+  name: string;
+  key: string;
+};
+
 type Props = {
   open: boolean;
   onClose: () => void;
-  onSelect: (url: string, name: string) => void;
+  onSelect: (selected: SelectedFile[]) => void;
+  multiple?: boolean;
   /** Exclude this URL from the list (e.g. the currently selected file). */
   excludeUrl?: string;
 };
@@ -48,11 +55,11 @@ function formatDate(ts: number): string {
   }
 }
 
-export function ExistingFilePicker({ open, onClose, onSelect, excludeUrl }: Props) {
+export function ExistingFilePicker({ open, onClose, onSelect, multiple = false, excludeUrl }: Props) {
   const [files, setFiles] = useState<UTFile[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [selectedKey, setSelectedKey] = useState<string | null>(null);
+  const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
 
   const loadFiles = useCallback(async () => {
     setLoading(true);
@@ -80,15 +87,27 @@ export function ExistingFilePicker({ open, onClose, onSelect, excludeUrl }: Prop
 
   useEffect(() => {
     if (open) {
-      setSelectedKey(null);
+      setSelectedKeys([]);
       void loadFiles();
     }
   }, [open, loadFiles]);
 
+  function handleToggleSelect(key: string) {
+    if (multiple) {
+      setSelectedKeys((prev) =>
+        prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key]
+      );
+    } else {
+      setSelectedKeys([key]);
+    }
+  }
+
   function handleConfirm() {
-    const file = files.find((f) => f.key === selectedKey);
-    if (file && file.url) {
-      onSelect(file.url, file.name);
+    const selectedFiles = files
+      .filter((f) => selectedKeys.includes(f.key) && f.url)
+      .map((f) => ({ url: f.url!, name: f.name, key: f.key }));
+    if (selectedFiles.length > 0) {
+      onSelect(selectedFiles);
       onClose();
     }
   }
@@ -138,44 +157,47 @@ export function ExistingFilePicker({ open, onClose, onSelect, excludeUrl }: Prop
 
           {!loading && !error && files.length > 0 && (
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-              {files.map((f) => (
-                <button
-                  key={f.key}
-                  onClick={() => setSelectedKey(f.key)}
-                  className={cn(
-                    "group relative flex flex-col overflow-hidden rounded-lg border bg-white text-left transition-all hover:shadow-md",
-                    selectedKey === f.key
-                      ? "border-emerald-500 ring-2 ring-emerald-500/30"
-                      : "border-gray-200 hover:border-emerald-300"
-                  )}
-                >
-                  {/* Thumbnail */}
-                  <div className="relative aspect-square overflow-hidden bg-gray-100">
-                    {f.url && (
-                      <img
-                        src={f.url}
-                        alt={f.name}
-                        loading="lazy"
-                        className="h-full w-full object-cover"
-                      />
+              {files.map((f) => {
+                const isSelected = selectedKeys.includes(f.key);
+                return (
+                  <button
+                    key={f.key}
+                    onClick={() => handleToggleSelect(f.key)}
+                    className={cn(
+                      "group relative flex flex-col overflow-hidden rounded-lg border bg-white text-left transition-all hover:shadow-md",
+                      isSelected
+                        ? "border-emerald-500 ring-2 ring-emerald-500/30"
+                        : "border-gray-200 hover:border-emerald-300"
                     )}
-                    {selectedKey === f.key && (
-                      <span className="absolute right-1.5 top-1.5 flex size-5 items-center justify-center rounded-full bg-emerald-600 text-white shadow-sm">
-                        <Check className="size-3" />
+                  >
+                    {/* Thumbnail */}
+                    <div className="relative aspect-square overflow-hidden bg-gray-100">
+                      {f.url && (
+                        <img
+                          src={f.url}
+                          alt={f.name}
+                          loading="lazy"
+                          className="h-full w-full object-cover"
+                        />
+                      )}
+                      {isSelected && (
+                        <span className="absolute right-1.5 top-1.5 flex size-5 items-center justify-center rounded-full bg-emerald-600 text-white shadow-sm">
+                          <Check className="size-3" />
+                        </span>
+                      )}
+                    </div>
+                    {/* Meta */}
+                    <div className="flex flex-col gap-0.5 p-2">
+                      <span className="truncate text-xs font-medium text-foreground">
+                        {f.name}
                       </span>
-                    )}
-                  </div>
-                  {/* Meta */}
-                  <div className="flex flex-col gap-0.5 p-2">
-                    <span className="truncate text-xs font-medium text-foreground">
-                      {f.name}
-                    </span>
-                    <span className="text-[10px] text-muted-foreground">
-                      {formatSize(f.size)} · {formatDate(f.uploadedAt)}
-                    </span>
-                  </div>
-                </button>
-              ))}
+                      <span className="text-[10px] text-muted-foreground">
+                        {formatSize(f.size)} · {formatDate(f.uploadedAt)}
+                      </span>
+                    </div>
+                  </button>
+                );
+              })}
             </div>
           )}
         </div>
@@ -186,6 +208,7 @@ export function ExistingFilePicker({ open, onClose, onSelect, excludeUrl }: Prop
             {files.length > 0
               ? `${files.length} file${files.length === 1 ? "" : "s"} available`
               : ""}
+            {selectedKeys.length > 0 ? ` · ${selectedKeys.length} selected` : ""}
           </p>
           <div className="flex items-center gap-2">
             <Button variant="outline" size="sm" onClick={onClose}>
@@ -194,7 +217,7 @@ export function ExistingFilePicker({ open, onClose, onSelect, excludeUrl }: Prop
             </Button>
             <Button
               size="sm"
-              disabled={!selectedKey}
+              disabled={selectedKeys.length === 0}
               onClick={handleConfirm}
               className="gap-1.5 bg-emerald-600 hover:bg-emerald-700"
             >

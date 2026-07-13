@@ -4,7 +4,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { UploadButton as UTUploadButton } from "@uploadthing/react";
 import type { OurFileRouter } from "@/uploadthing";
-import { Trash2, Eye, EyeOff, Loader2, ImageIcon, Plus, X, FolderPlus, Save } from "lucide-react";
+import { Trash2, Eye, EyeOff, Loader2, ImageIcon, Plus, X, FolderPlus, Save, FolderOpen } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,6 +18,7 @@ import {
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { cn } from "@/lib/utils";
+import { ExistingFilePicker } from "@/components/admin/existing-file-picker";
 
 type GalleryImage = {
   id: string;
@@ -55,6 +56,33 @@ export function GalleryEditor({ images: initial, albums: initialAlbums }: Props)
   const [albumDrafts, setAlbumDrafts] = useState<Record<string, Partial<Album>>>({});
   const [albumSaving, setAlbumSaving] = useState<string | null>(null);
   const [albumDeleting, setAlbumDeleting] = useState<string | null>(null);
+  const [pickerOpen, setPickerOpen] = useState(false);
+
+  async function handleSelectExisting(selected: { url: string; name: string; key: string }[]) {
+    if (selected.length === 0) return;
+    try {
+      await Promise.all(
+        selected.map(async (file) => {
+          const res = await fetch("/api/admin/gallery", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              url: file.url,
+              key: file.key,
+              name: file.name,
+              albumId: selectedAlbumId || null,
+            }),
+          });
+          if (!res.ok) throw new Error(`Failed to add "${file.name}"`);
+        })
+      );
+      toast.success(`Added ${selected.length} image${selected.length === 1 ? "" : "s"} to gallery`);
+      refreshList();
+    } catch (e: any) {
+      toast.error(e?.message ?? "Failed to add selected files to gallery");
+      refreshList();
+    }
+  }
 
   // === Image helpers ===
   function display(img: GalleryImage): GalleryImage {
@@ -328,6 +356,15 @@ export function GalleryEditor({ images: initial, albums: initialAlbums }: Props)
               }}
               content={{ button: ({ ready }) => ready ? "Choose Photos to Upload" : "Preparing…" }}
             />
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setPickerOpen(true)}
+              className="mt-1 gap-1.5"
+            >
+              <FolderOpen className="size-3.5" />
+              Select from existing uploads
+            </Button>
           </div>
         </CardContent>
       </Card>
@@ -431,6 +468,13 @@ export function GalleryEditor({ images: initial, albums: initialAlbums }: Props)
           No images yet. Use the uploader above to add photos.
         </div>
       )}
+
+      <ExistingFilePicker
+        open={pickerOpen}
+        onClose={() => setPickerOpen(false)}
+        onSelect={handleSelectExisting}
+        multiple={true}
+      />
     </div>
   );
 }

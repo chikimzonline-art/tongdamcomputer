@@ -60,3 +60,35 @@ export async function DELETE(req: NextRequest) {
   revalidatePath("/", "layout");
   return NextResponse.json({ ok: true });
 }
+
+/**
+ * POST /api/admin/gallery  - create a new gallery image record from an existing file
+ */
+export async function POST(req: NextRequest) {
+  if (!(await requireAdmin()))
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const body = await req.json();
+  const { url, key, name, albumId } = body;
+  if (!url || !key || !name)
+    return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+
+  const count = await db.galleryImage.count({
+    where: albumId ? { albumId } : { albumId: null },
+  });
+
+  const item = await db.galleryImage.create({
+    data: {
+      url: String(url),
+      key: String(key),
+      name: String(name),
+      width: 0,
+      height: 0,
+      albumId: albumId ? String(albumId) : null,
+      sortOrder: count + 1,
+      isActive: true,
+    },
+  });
+
+  revalidatePath("/", "layout");
+  return NextResponse.json({ ok: true, item });
+}

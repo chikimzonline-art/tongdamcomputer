@@ -264,7 +264,9 @@ export function AssetsEditor({ logoUrl: initialLogo, faviconUrl: initialFavicon 
         open={pickerFor !== null}
         onClose={() => setPickerFor(null)}
         excludeUrl={pickerFor === "logo" ? logoUrl : faviconUrl}
-        onSelect={(url, name) => {
+        onSelect={(selected) => {
+          if (selected.length === 0) return;
+          const { url, name } = selected[0];
           if (pickerFor === "logo") {
             setLogoUrl(url);
             void saveAsset("site.logoUrl", url);

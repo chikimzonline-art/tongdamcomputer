@@ -415,7 +415,9 @@ export function AboutEditor({ content: initialContent, milestones: initialMilest
             open={showFilePicker}
             onClose={() => setShowFilePicker(false)}
             excludeUrl={founderImageUrl}
-            onSelect={(url) => void saveFounderImage(url)}
+            onSelect={(selected) => {
+              if (selected.length > 0) void saveFounderImage(selected[0].url);
+            }}
           />
         </CardContent>
       </Card>
