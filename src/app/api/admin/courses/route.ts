@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { revalidatePath } from "next/cache";
 
 async function requireAdmin() {
   return await getServerSession(authOptions);
@@ -37,6 +38,7 @@ export async function PUT(req: NextRequest) {
       ...(institute !== undefined ? { institute } : {}),
     },
   });
+  revalidatePath("/", "layout");
   return NextResponse.json({ ok: true, item });
 }
 
@@ -81,6 +83,7 @@ export async function POST(req: NextRequest) {
       isActive: isActive !== false,
     },
   });
+  revalidatePath("/", "layout");
   return NextResponse.json({ ok: true, item });
 }
 
@@ -95,6 +98,7 @@ export async function DELETE(req: NextRequest) {
   if (!id)
     return NextResponse.json({ error: "Missing id" }, { status: 400 });
   await db.course.delete({ where: { id } });
+  revalidatePath("/", "layout");
   return NextResponse.json({ ok: true });
 }
 

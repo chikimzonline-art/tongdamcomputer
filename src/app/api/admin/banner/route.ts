@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { revalidatePath } from "next/cache";
 
 async function requireAdmin() {
   return await getServerSession(authOptions);
@@ -23,6 +24,7 @@ export async function POST(req: NextRequest) {
   const item = await db.alertBanner.create({
     data: { message: String(message), link: link || null, isActive: true },
   });
+  revalidatePath("/", "layout");
   return NextResponse.json({ ok: true, item });
 }
 
@@ -36,5 +38,6 @@ export async function PATCH(req: NextRequest) {
     where: { id },
     data: { isActive: Boolean(isActive) },
   });
+  revalidatePath("/", "layout");
   return NextResponse.json({ ok: true, item });
 }

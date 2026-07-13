@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { revalidatePath } from "next/cache";
 
 /**
  * GET /api/admin/content  - list all site content
@@ -31,5 +32,7 @@ export async function PUT(req: NextRequest) {
     update: { value },
     create: { key, value, category: category || "general" },
   });
+  
+  revalidatePath("/", "layout");
   return NextResponse.json({ ok: true, item });
 }

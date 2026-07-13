@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { revalidatePath } from "next/cache";
 
 async function requireAdmin() {
   return await getServerSession(authOptions);
@@ -39,6 +40,7 @@ export async function PUT(req: NextRequest) {
   if (albumId !== undefined) data.albumId = albumId === "" ? null : String(albumId);
 
   const item = await db.galleryImage.update({ where: { id: String(id) }, data });
+  revalidatePath("/", "layout");
   return NextResponse.json({ ok: true, item });
 }
 
@@ -55,5 +57,6 @@ export async function DELETE(req: NextRequest) {
   if (!id)
     return NextResponse.json({ error: "Missing id" }, { status: 400 });
   await db.galleryImage.delete({ where: { id } });
+  revalidatePath("/", "layout");
   return NextResponse.json({ ok: true });
 }

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { revalidatePath } from "next/cache";
 
 async function requireAdmin() {
   return await getServerSession(authOptions);
@@ -25,6 +26,7 @@ export async function POST(req: NextRequest) {
   const item = await db.quickAction.create({
     data: { title: String(title), description: String(description || ""), href: String(href), cta: String(cta || ""), icon: String(icon || "CalendarCheck"), sortOrder: sort, isActive: isActive !== false },
   });
+  revalidatePath("/", "layout");
   return NextResponse.json({ ok: true, item });
 }
 
@@ -42,6 +44,7 @@ export async function PUT(req: NextRequest) {
   if (sortOrder !== undefined) data.sortOrder = Number(sortOrder);
   if (isActive !== undefined) data.isActive = Boolean(isActive);
   const item = await db.quickAction.update({ where: { id: String(id) }, data });
+  revalidatePath("/", "layout");
   return NextResponse.json({ ok: true, item });
 }
 
@@ -51,5 +54,6 @@ export async function DELETE(req: NextRequest) {
   const id = new URL(req.url).searchParams.get("id");
   if (!id) return NextResponse.json({ error: "Missing id" }, { status: 400 });
   await db.quickAction.delete({ where: { id } });
+  revalidatePath("/", "layout");
   return NextResponse.json({ ok: true });
 }

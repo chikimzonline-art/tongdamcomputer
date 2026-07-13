@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { revalidatePath } from "next/cache";
 
 async function requireAdmin() {
   return await getServerSession(authOptions);
@@ -35,6 +36,7 @@ export async function PUT(req: NextRequest) {
       ...(sortOrder !== undefined ? { sortOrder: Number(sortOrder) } : {}),
     },
   });
+  revalidatePath("/", "layout");
   return NextResponse.json({ ok: true, item });
 }
 
@@ -55,5 +57,6 @@ export async function POST(req: NextRequest) {
       isAvailable: isAvailable !== false,
     },
   });
+  revalidatePath("/", "layout");
   return NextResponse.json({ ok: true, item });
 }
