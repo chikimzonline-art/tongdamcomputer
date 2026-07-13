@@ -23,7 +23,7 @@ import {
   FileText,
   FileCheck,
 } from "lucide-react";
-import { getSiteContentMap, getVentures } from "@/lib/data";
+import { getSiteContentMap, getVentures, getAffiliations } from "@/lib/data";
 import { VENTURE_ICONS, VENTURE_ACCENTS, DEFAULT_ACCENT } from "@/lib/venture-config";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -203,6 +203,15 @@ const ESSENTIAL_SERVICES: EssentialService[] = [
 export default async function HomePage() {
   const content = await getSiteContentMap();
   const ventures = await getVentures();
+  const affiliationRows = await getAffiliations();
+  const affiliations = affiliationRows.map((a) => ({
+    id: a.id,
+    name: a.name,
+    category: a.category,
+    description: a.description,
+    icon: a.icon,
+    accent: a.accent,
+  }));
   const heroTitle = content["hero.title"] ?? "From a Local Startup to a Multi-Department Hub";
   const heroSubtitle =
     content["hero.subtitle"] ??
@@ -725,7 +734,7 @@ export default async function HomePage() {
           </div>
 
           <div className="mt-12">
-            <AffiliationCarousel />
+            <AffiliationCarousel affiliations={affiliations} />
           </div>
         </div>
       </section>

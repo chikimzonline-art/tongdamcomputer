@@ -1,108 +1,34 @@
 "use client";
 
 import { useState } from "react";
-import {
-  ShieldCheck,
-  Award,
-  Building2,
-  Hotel,
-  UtensilsCrossed,
-  Briefcase,
-  Star,
-  BadgeCheck,
-  Landmark,
-  Sparkles,
-  ArrowLeft,
-  ArrowRight,
-} from "lucide-react";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import {
+  AFFILIATION_ICONS,
+  AFFILIATION_ACCENTS,
+  DEFAULT_AFFILIATION_ACCENT,
+} from "@/lib/affiliation-config";
 
-type Affiliation = {
+export type AffiliationData = {
+  id: string;
   name: string;
   category: string;
   description: string;
-  icon: React.ElementType;
+  icon: string;
   accent: string;
 };
 
-/**
- * Affiliations & brand partners — covers E-Max India (govt. recognition),
- * the Hotel Management 5-star placement network, and institutional partners.
- */
-const AFFILIATIONS: Affiliation[] = [
-  {
-    name: "E-Max India",
-    category: "Education Affiliation",
-    description:
-      "Govt. of India recognized vocational education body — Tongdam is the Top 1 ranked institute nationwide.",
-    icon: BadgeCheck,
-    accent: "from-emerald-500 to-teal-600",
-  },
-  {
-    name: "Govt. of India",
-    category: "Government Recognition",
-    description:
-      "All E-Max certifications issued at Tongdam are recognized by the Government of India and valid nationwide.",
-    icon: Landmark,
-    accent: "from-emerald-600 to-emerald-800",
-  },
-  {
-    name: "UCO Bank CSP",
-    category: "Banking Partner",
-    description:
-      "Authorized Customer Service Point for UCO Bank — delivering banking services to the local community.",
-    icon: Building2,
-    accent: "from-violet-500 to-violet-700",
-  },
-  {
-    name: "5-Star Hotel Network",
-    category: "Hotel Management Placement",
-    description:
-      "Pan-India placement network across leading 5-star hotels — 100% placement guarantee for HM diploma graduates.",
-    icon: Hotel,
-    accent: "from-amber-500 to-amber-700",
-  },
-  {
-    name: "Hospitality Partners",
-    category: "Industry Collaboration",
-    description:
-      "Resort chains, cruise lines, and fine-dining restaurants actively recruit from our Hotel Management batches.",
-    icon: UtensilsCrossed,
-    accent: "from-rose-500 to-pink-700",
-  },
-  {
-    name: "Taj Group",
-    category: "Premier Placement Partner",
-    description:
-      "Our graduates have been placed at Taj properties across India — a testament to our training quality.",
-    icon: Star,
-    accent: "from-amber-600 to-orange-700",
-  },
-  {
-    name: "ITC Hotels",
-    category: "Premier Placement Partner",
-    description:
-      "ITC Hotels welcomes our trained hotel management students into front office, F&B, and housekeeping roles.",
-    icon: Building2,
-    accent: "from-emerald-600 to-teal-700",
-  },
-  {
-    name: "Oberoi Group",
-    category: "Premier Placement Partner",
-    description:
-      "The Oberoi Group partners with us to hire skilled hospitality professionals from our diploma program.",
-    icon: Briefcase,
-    accent: "from-violet-600 to-purple-700",
-  },
-];
+type Props = {
+  affiliations: AffiliationData[];
+};
 
 const ITEMS_PER_SLIDE = 4;
 
-export function AffiliationCarousel() {
+export function AffiliationCarousel({ affiliations }: Props) {
   const [index, setIndex] = useState(0);
 
-  const totalSlides = Math.ceil(AFFILIATIONS.length / ITEMS_PER_SLIDE);
+  const totalSlides = Math.max(1, Math.ceil(affiliations.length / ITEMS_PER_SLIDE));
 
   function goPrev() {
     setIndex((i) => (i - 1 + totalSlides) % totalSlides);
@@ -115,9 +41,17 @@ export function AffiliationCarousel() {
   }
 
   // Build the slides — each slide contains up to ITEMS_PER_SLIDE cards
-  const slides: Affiliation[][] = [];
-  for (let i = 0; i < AFFILIATIONS.length; i += ITEMS_PER_SLIDE) {
-    slides.push(AFFILIATIONS.slice(i, i + ITEMS_PER_SLIDE));
+  const slides: AffiliationData[][] = [];
+  for (let i = 0; i < affiliations.length; i += ITEMS_PER_SLIDE) {
+    slides.push(affiliations.slice(i, i + ITEMS_PER_SLIDE));
+  }
+
+  if (affiliations.length === 0) {
+    return (
+      <div className="rounded-lg border border-dashed py-12 text-center text-gray-400">
+        No affiliations to display yet.
+      </div>
+    );
   }
 
   return (
@@ -142,17 +76,19 @@ export function AffiliationCarousel() {
             >
               <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
                 {slide.map((aff) => {
-                  const Icon = aff.icon;
+                  const Icon = AFFILIATION_ICONS[aff.icon] ?? AFFILIATION_ICONS.BadgeCheck;
+                  const accentCfg =
+                    AFFILIATION_ACCENTS[aff.accent] ?? DEFAULT_AFFILIATION_ACCENT;
                   return (
                     <div
-                      key={aff.name}
+                      key={aff.id}
                       className="group relative flex flex-col overflow-hidden rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-md"
                     >
                       {/* Icon */}
                       <div
                         className={cn(
                           "mb-4 flex size-12 items-center justify-center rounded-xl bg-gradient-to-br text-white shadow-sm",
-                          aff.accent
+                          accentCfg.gradient
                         )}
                       >
                         <Icon className="size-6" aria-hidden="true" />

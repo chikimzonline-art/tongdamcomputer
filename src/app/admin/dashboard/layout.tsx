@@ -17,6 +17,7 @@ import {
   Menu,
   Loader2,
   LayoutGrid,
+  Handshake,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -38,6 +39,7 @@ const NAV_ITEMS: NavItem[] = [
   { href: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/admin/dashboard/leads", label: "Leads", icon: Inbox },
   { href: "/admin/dashboard/ventures", label: "Ventures", icon: LayoutGrid },
+  { href: "/admin/dashboard/affiliations", label: "Affiliations", icon: Handshake },
   { href: "/admin/dashboard/cms", label: "Content", icon: FileEdit },
   { href: "/admin/dashboard/courses", label: "Courses", icon: GraduationCap },
   { href: "/admin/dashboard/menu", label: "Menu", icon: Utensils },

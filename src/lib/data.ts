@@ -110,3 +110,20 @@ export async function getAllVentures() {
   return db.venture.findMany({ orderBy: { sortOrder: "asc" } });
 }
 
+
+/**
+ * Get all active affiliations, sorted — used by the home page carousel.
+ */
+export async function getAffiliations() {
+  return db.affiliation.findMany({
+    where: { isActive: true },
+    orderBy: { sortOrder: "asc" },
+  });
+}
+
+/**
+ * Get ALL affiliations (including inactive) — for admin.
+ */
+export async function getAllAffiliations() {
+  return db.affiliation.findMany({ orderBy: { sortOrder: "asc" } });
+}
