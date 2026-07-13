@@ -30,12 +30,13 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
-.env*
+# env files — never commit real secrets
+.env
+.env.*
+!.env.example
 
 # vercel
 .vercel
-
 
 # typescript
 *.tsbuildinfo
@@ -48,7 +49,26 @@ dev.log
 dev.out.log
 test
 prompt
-
 server.log
-# Skills directory
+
+# Skills / AI agent files
 /skills/
+/agent-ctx/
+
+# AI tool-result caches (not source code)
+/tool-results/
+
+# Internal developer logs (not for public repo)
+worklog.md
+
+# SQLite database (contains real data — never commit)
+/db/*.db
+/db/*.db-shm
+/db/*.db-wal
+
+# User upload folder (large binary assets — serve from cloud storage)
+/upload/
+
+# Runtime files
+.zscripts/dev.pid
+*.pid
