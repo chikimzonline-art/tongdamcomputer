@@ -15,6 +15,7 @@ import {
   HandHeart,
   Award,
   Building2,
+  Quote,
 } from "lucide-react";
 import { getSiteContentMap } from "@/lib/data";
 import { Card, CardContent } from "@/components/ui/card";
@@ -172,108 +173,169 @@ export default async function AboutPage() {
         </div>
       </section>
 
-      {/* ============== BRAND STORY ============== */}
+      {/* ============== OUR STORY ============== */}
       <section
         aria-labelledby="story-heading"
-        className="bg-white py-16 lg:py-20"
+        className="bg-gray-50 py-16 lg:py-20"
       >
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
-          <div className="grid grid-cols-1 gap-8 lg:grid-cols-5">
-            {/* Left: Story */}
-            <article className="lg:col-span-3">
-              <Badge
-                variant="secondary"
-                className="mb-3 gap-1 border-emerald-200 bg-emerald-100 text-emerald-700"
-              >
-                <Building2 className="size-3.5" aria-hidden="true" />
-                Our Story
-              </Badge>
+          {/* Pill badge */}
+          <div className="mb-8 flex justify-center">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-100 px-4 py-1.5 text-sm font-medium text-stone-700">
+              <Heart className="size-3.5 text-amber-500" aria-hidden="true" />
+              Our Story
+            </span>
+          </div>
+
+          {/* Two-column: founder (left) + story text (right) */}
+          <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:gap-12">
+            {/* Left: Founder card */}
+            <div className="flex flex-col items-center lg:items-start">
+              {/* Founder image area with teal/orange background */}
+              <div className="relative w-full max-w-sm overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 shadow-lg">
+                {/* Orange diagonal accent */}
+                <div
+                  aria-hidden="true"
+                  className="absolute -right-10 top-0 h-40 w-40 rotate-12 bg-amber-400/80"
+                />
+                {/* FOUNDER badge */}
+                <span className="absolute right-3 top-3 z-10 rounded bg-amber-500 px-2 py-0.5 text-xs font-semibold text-white">
+                  FOUNDER
+                </span>
+                {/* Placeholder avatar (circular) */}
+                <div className="relative flex aspect-square items-center justify-center">
+                  <span className="flex size-32 items-center justify-center rounded-full bg-white/20 text-5xl font-bold text-white backdrop-blur-sm sm:size-40">
+                    {founder.charAt(founder.indexOf(" ") + 1) || "T"}
+                  </span>
+                </div>
+              </div>
+
+              {/* Caption below image */}
+              <p className="mt-2 flex items-center gap-1.5 text-xs text-stone-500">
+                <User className="size-3.5 text-emerald-700" aria-hidden="true" />
+                {founder}
+              </p>
+
+              {/* Founder info bar */}
+              <div className="mt-4 w-full max-w-sm rounded-lg bg-emerald-700 p-4 text-white shadow-sm">
+                <div className="flex items-center gap-3">
+                  <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-emerald-800 text-sm font-bold text-white">
+                    {founder.charAt(founder.indexOf(" ") + 1) || "T"}
+                  </span>
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-wide text-emerald-100">
+                      Founder &amp; Director
+                    </p>
+                    <p className="text-lg font-bold text-white">{founder}</p>
+                    <p className="text-xs italic text-emerald-100">
+                      Established {foundedYear}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Right: Story text */}
+            <article>
               <h2
                 id="story-heading"
-                className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl"
+                className="sr-only"
               >
-                From a single desk to a community hub
+                Our Story
               </h2>
-              <Card className="mt-6 border-emerald-100 py-0">
-                <CardContent className="p-6 sm:p-8">
-                  <p className="whitespace-pre-line text-base leading-relaxed text-muted-foreground">
-                    {story}
-                  </p>
-                </CardContent>
-              </Card>
+              <div className="space-y-4 text-base leading-relaxed text-stone-600">
+                <p>
+                  Tongdam Computers was founded in the year {foundedYear} by{" "}
+                  {founder} with a singular vision — to uplift the local
+                  community by providing proper digital access and quality
+                  skill-based education. What began as a small in-house venture
+                  has grown steadily over the years into a multi-faceted
+                  organization serving the community across several disciplines.
+                </p>
+                <p>
+                  From its very first day, Tongdam Computers has embraced a
+                  customer-first approach. Helping the community is not just our
+                  mission — it is the very foundation upon which every decision
+                  is made. We believe that when you equip people with the right
+                  skills and bring essential digital and financial services to
+                  their doorstep, you transform not just individuals but entire
+                  neighborhoods.
+                </p>
+                <p>
+                  Today, Tongdam Computers operates multiple institutes and
+                  service centers, each dedicated to a specific area of
+                  empowerment — from computer education and hotel management to
+                  tailoring, mobile repairing, and essential citizen services.
+                  Every venture under the Tongdam umbrella shares the same
+                  commitment: quality training, genuine service, and a deep
+                  sense of responsibility toward the community we serve.
+                </p>
+              </div>
+
+              {/* Tagline with vertical line */}
+              <div className="mt-6 flex items-center gap-3">
+                <span
+                  className="h-5 w-0.5 bg-emerald-600"
+                  aria-hidden="true"
+                />
+                <p className="text-sm italic text-stone-700">
+                  Serving the community with dedication since {foundedYear}.
+                </p>
+              </div>
             </article>
+          </div>
 
-            {/* Right: At a glance */}
-            <aside className="lg:col-span-2">
-              <Card className="h-full border-emerald-100 bg-gradient-to-br from-emerald-50 to-teal-50/40 py-0">
-                <CardContent className="p-6 sm:p-8">
-                  <h3 className="text-lg font-semibold text-foreground">
-                    At a Glance
-                  </h3>
-                  <p className="mt-1 text-sm text-muted-foreground">
-                    Quick facts about Tongdam Computers.
-                  </p>
+          {/* Three cards: Founder's Words, Mission, Vision */}
+          <div className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-3">
+            {/* Founder's Words */}
+            <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+              <span className="mb-4 flex size-10 items-center justify-center rounded-full bg-amber-50">
+                <Quote className="size-5 text-amber-500" aria-hidden="true" />
+              </span>
+              <h3 className="text-lg font-semibold text-stone-800">
+                Founder&rsquo;s Words
+              </h3>
+              <p className="mt-3 text-sm leading-relaxed text-stone-600">
+                &ldquo;We started with a simple belief — that digital access and
+                quality skills can transform lives. Today, that belief drives
+                every venture under the Tongdam umbrella.&rdquo;
+              </p>
+              <p className="mt-3 text-xs font-semibold uppercase tracking-wide text-stone-500">
+                — {founder.toUpperCase()}
+              </p>
+            </div>
 
-                  <dl className="mt-6 space-y-4">
-                    <div className="flex items-start gap-3">
-                      <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-emerald-600 text-white">
-                        <CalendarDays className="size-5" aria-hidden="true" />
-                      </span>
-                      <div>
-                        <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                          Founded
-                        </dt>
-                        <dd className="text-sm font-semibold text-foreground">
-                          {foundedYear}
-                        </dd>
-                      </div>
-                    </div>
+            {/* Our Mission */}
+            <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+              <span className="mb-4 flex size-10 items-center justify-center rounded-full bg-emerald-50">
+                <Target className="size-5 text-emerald-600" aria-hidden="true" />
+              </span>
+              <h3 className="text-lg font-semibold text-stone-800">
+                Our Mission
+              </h3>
+              <p className="mt-3 text-sm leading-relaxed text-stone-600">
+                To uplift the local community by providing accessible digital
+                services, quality skill-based training, and genuine
+                customer-first support — ensuring that no one is left behind in
+                the journey toward progress.
+              </p>
+            </div>
 
-                    <div className="flex items-start gap-3">
-                      <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-emerald-600 text-white">
-                        <User className="size-5" aria-hidden="true" />
-                      </span>
-                      <div>
-                        <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                          Founder
-                        </dt>
-                        <dd className="text-sm font-semibold text-foreground">
-                          {founder}
-                        </dd>
-                      </div>
-                    </div>
-
-                    <div className="flex items-start gap-3">
-                      <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-emerald-600 text-white">
-                        <MapPin className="size-5" aria-hidden="true" />
-                      </span>
-                      <div>
-                        <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                          Location
-                        </dt>
-                        <dd className="text-sm font-semibold text-foreground">
-                          Churachandpur, Manipur
-                        </dd>
-                      </div>
-                    </div>
-
-                    <div className="flex items-start gap-3">
-                      <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-emerald-600 text-white">
-                        <Target className="size-5" aria-hidden="true" />
-                      </span>
-                      <div>
-                        <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                          Focus
-                        </dt>
-                        <dd className="text-sm font-semibold text-foreground">
-                          Vocational Training · Public Services · Lifestyle
-                        </dd>
-                      </div>
-                    </div>
-                  </dl>
-                </CardContent>
-              </Card>
-            </aside>
+            {/* Our Vision */}
+            <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+              <span className="mb-4 flex size-10 items-center justify-center rounded-full bg-emerald-50">
+                <Eye className="size-5 text-emerald-600" aria-hidden="true" />
+              </span>
+              <h3 className="text-lg font-semibold text-stone-800">
+                Our Vision
+              </h3>
+              <p className="mt-3 text-sm leading-relaxed text-stone-600">
+                To be the most trusted and impactful community empowerment hub
+                in the region, where every individual has the opportunity to
+                learn, grow, and build a better livelihood through digital
+                access and skill development.
+              </p>
+            </div>
           </div>
         </div>
       </section>
