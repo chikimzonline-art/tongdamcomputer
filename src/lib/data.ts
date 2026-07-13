@@ -144,3 +144,37 @@ export async function getGalleryImages() {
 export async function getAllGalleryImages() {
   return db.galleryImage.findMany({ orderBy: { sortOrder: "asc" } });
 }
+
+/**
+ * Get all active milestones, sorted — used by the About page timeline.
+ */
+export async function getMilestones() {
+  return db.milestone.findMany({
+    where: { isActive: true },
+    orderBy: { sortOrder: "asc" },
+  });
+}
+
+/**
+ * Get ALL milestones (including inactive) — for admin.
+ */
+export async function getAllMilestones() {
+  return db.milestone.findMany({ orderBy: { sortOrder: "asc" } });
+}
+
+/**
+ * Get all active core values, sorted — used by the About page.
+ */
+export async function getCoreValues() {
+  return db.coreValue.findMany({
+    where: { isActive: true },
+    orderBy: { sortOrder: "asc" },
+  });
+}
+
+/**
+ * Get ALL core values (including inactive) — for admin.
+ */
+export async function getAllCoreValues() {
+  return db.coreValue.findMany({ orderBy: { sortOrder: "asc" } });
+}

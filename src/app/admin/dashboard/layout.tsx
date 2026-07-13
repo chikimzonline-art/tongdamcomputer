@@ -20,6 +20,7 @@ import {
   Handshake,
   ImageIcon,
   Settings2,
+  FileText,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -42,6 +43,7 @@ const NAV_ITEMS: NavItem[] = [
   { href: "/admin/dashboard/leads", label: "Leads", icon: Inbox },
   { href: "/admin/dashboard/ventures", label: "Ventures", icon: LayoutGrid },
   { href: "/admin/dashboard/affiliations", label: "Affiliations", icon: Handshake },
+  { href: "/admin/dashboard/about", label: "About Page", icon: FileText },
   { href: "/admin/dashboard/gallery", label: "Gallery", icon: ImageIcon },
   { href: "/admin/dashboard/assets", label: "Site Assets", icon: Settings2 },
   { href: "/admin/dashboard/cms", label: "Content", icon: FileEdit },
