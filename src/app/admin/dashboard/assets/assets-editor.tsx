@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { toast } from "sonner";
 import { UploadButton as UTUploadButton } from "@uploadthing/react";
+import "@uploadthing/react/styles.css";
 import type { OurFileRouter } from "@/uploadthing";
 import { Trash2, Loader2, Check, Image as ImageIcon } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
