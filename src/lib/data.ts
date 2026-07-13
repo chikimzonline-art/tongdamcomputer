@@ -178,3 +178,33 @@ export async function getCoreValues() {
 export async function getAllCoreValues() {
   return db.coreValue.findMany({ orderBy: { sortOrder: "asc" } });
 }
+
+/**
+ * Homepage data helpers — active items only for public rendering.
+ */
+export async function getStats() {
+  return db.stat.findMany({ where: { isActive: true }, orderBy: { sortOrder: "asc" } });
+}
+
+export async function getQuickActions() {
+  return db.quickAction.findMany({ where: { isActive: true }, orderBy: { sortOrder: "asc" } });
+}
+
+export async function getEssentialServices() {
+  return db.essentialService.findMany({ where: { isActive: true }, orderBy: { sortOrder: "asc" } });
+}
+
+/**
+ * Admin helpers — all items including inactive.
+ */
+export async function getAllStats() {
+  return db.stat.findMany({ orderBy: { sortOrder: "asc" } });
+}
+
+export async function getAllQuickActions() {
+  return db.quickAction.findMany({ orderBy: { sortOrder: "asc" } });
+}
+
+export async function getAllEssentialServices() {
+  return db.essentialService.findMany({ orderBy: { sortOrder: "asc" } });
+}

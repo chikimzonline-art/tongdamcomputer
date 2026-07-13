@@ -21,6 +21,7 @@ import {
   ImageIcon,
   Settings2,
   FileText,
+  Home,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -41,6 +42,7 @@ type NavItem = {
 const NAV_ITEMS: NavItem[] = [
   { href: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/admin/dashboard/leads", label: "Leads", icon: Inbox },
+  { href: "/admin/dashboard/home", label: "Home Page", icon: Home },
   { href: "/admin/dashboard/ventures", label: "Ventures", icon: LayoutGrid },
   { href: "/admin/dashboard/affiliations", label: "Affiliations", icon: Handshake },
   { href: "/admin/dashboard/about", label: "About Page", icon: FileText },

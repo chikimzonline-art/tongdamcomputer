@@ -4,21 +4,21 @@ import { ContentEditor, type ContentItem } from "./content-editor";
 export const dynamic = "force-dynamic";
 
 const CATEGORY_LABELS: Record<string, string> = {
-  home: "Home Page",
   contact: "Contact Details",
   education: "Education & Training",
   general: "General",
 };
 
-const CATEGORY_ORDER = ["home", "contact", "education", "general"];
+const CATEGORY_ORDER = ["contact", "education", "general"];
 
 export default async function CmsPage() {
-  // Exclude the "about" category — it has its own dedicated editor at
-  // /admin/dashboard/about. Also exclude "assets" (managed at
-  // /admin/dashboard/assets).
+  // Exclude categories that have their own dedicated editors:
+  // - "home" → /admin/dashboard/home
+  // - "about" → /admin/dashboard/about
+  // - "assets" → /admin/dashboard/assets
   const rows = await db.siteContent.findMany({
     where: {
-      category: { notIn: ["about", "assets"] },
+      category: { notIn: ["home", "about", "assets"] },
     },
     orderBy: [{ category: "asc" }, { key: "asc" }],
   });

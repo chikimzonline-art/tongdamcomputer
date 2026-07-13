@@ -4,206 +4,29 @@ import {
   Phone,
   Sparkles,
   ShieldCheck,
-  Trophy,
-  Users,
-  Computer,
-  CalendarCheck,
-  BookOpen,
-  IdCard,
   Quote,
   Star,
   TrendingUp,
   MapPin,
   Mail,
-  Briefcase,
   Check,
-  Landmark,
-  Fingerprint,
-  Printer,
-  FileText,
-  FileCheck,
 } from "lucide-react";
-import { getSiteContentMap, getVentures, getAffiliations } from "@/lib/data";
+import { getSiteContentMap, getVentures, getAffiliations, getStats, getQuickActions, getEssentialServices, getMilestones } from "@/lib/data";
 import { VENTURE_ICONS, VENTURE_ACCENTS, DEFAULT_ACCENT } from "@/lib/venture-config";
+import { HOME_ICONS, HOME_ACCENTS } from "@/lib/home-config";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { AffiliationCarousel } from "@/components/site/affiliation-carousel";
 
-const STATS = [
-  { label: "Business Ventures", value: "6+", icon: Briefcase },
-  { label: "Students Trained", value: "1000+", icon: Users },
-  { label: "Courses Offered", value: "17+", icon: BookOpen },
-  { label: "Rank in India (E-Max)", value: "Top 1", icon: Trophy },
-];
-
-const QUICK_ACTIONS = [
-  {
-    title: "Book a Table",
-    description: "Reserve your spot at our multi-cuisine restaurant for lunch or dinner.",
-    href: "/lifestyle/restaurant",
-    icon: CalendarCheck,
-    cta: "View menu & book",
-  },
-  {
-    title: "Enroll in a Course",
-    description: "Admissions open for DCA, ADCA, Tally, Web Dev, Tailoring & Hotel Management.",
-    href: "/education/computer-training",
-    icon: BookOpen,
-    cta: "Explore courses",
-  },
-  {
-    title: "Apply for Aadhaar / PAN",
-    description: "Walk-in Aadhaar enrolment, PAN card application and CSP banking services.",
-    href: "/services/computer-works",
-    icon: IdCard,
-    cta: "Service details",
-  },
-];
-
-const TIMELINE = [
-  { year: "2020", label: "Founded", detail: "In-house startup in Churachandpur, Manipur" },
-  { year: "2021", label: "Computer Training", detail: "Affiliated to E-Max India; first DCA batch" },
-  { year: "2022", label: "Public Services", detail: "Aadhaar / PAN / CSP banking added" },
-  { year: "2023", label: "Lifestyle Hub", detail: "Restaurant & tailoring launched" },
-  { year: "2024", label: "Top 1 Institute", detail: "Ranked #1 E-Max institute nationwide" },
-];
-
-type EssentialService = {
-  title: string;
-  description: string;
-  icon: React.ElementType;
-  services: string[];
-  extraCount: number;
-  accent: {
-    iconBg: string;
-    iconText: string;
-    dot: string;
-    link: string;
-  };
-};
-
-const ESSENTIAL_SERVICES: EssentialService[] = [
-  {
-    title: "CSP UCO Bank Services",
-    description:
-      "As an authorized Customer Service Point (CSP) for UCO Bank, we bring essential banking services closer to your doorstep.",
-    icon: Landmark,
-    services: [
-      "Account Opening (Savings/Current)",
-      "Cash Deposit & Withdrawal",
-      "Money Transfer (NEFT/RTGS/IMPS)",
-      "Social Security Schemes (PMJJBY, PMSBY, APY)",
-    ],
-    extraCount: 2,
-    accent: {
-      iconBg: "bg-emerald-500",
-      iconText: "text-white",
-      dot: "text-emerald-500",
-      link: "text-emerald-600",
-    },
-  },
-  {
-    title: "Aadhaar Services",
-    description:
-      "Comprehensive Aadhaar related services to ensure your identification documents are always up to date.",
-    icon: Fingerprint,
-    services: [
-      "PVC Card Printing (Smart Card)",
-      "Biometric Updates (Photo, Fingerprint, Iris)",
-      "Demographic Updates (Name, Address, DOB)",
-      "New Enrolment Assistance",
-    ],
-    extraCount: 2,
-    accent: {
-      iconBg: "bg-amber-500",
-      iconText: "text-white",
-      dot: "text-amber-500",
-      link: "text-amber-600",
-    },
-  },
-  {
-    title: "DTP & Printing Works",
-    description:
-      "Professional desktop publishing and high-quality printing services for all your personal and business needs.",
-    icon: Printer,
-    services: [
-      "Resume / CV Creation",
-      "English, Hindi & Local Language Typing",
-      "High Speed Xerox (B&W / Color)",
-      "Passport Size Photos (Urgent)",
-    ],
-    extraCount: 2,
-    accent: {
-      iconBg: "bg-pink-500",
-      iconText: "text-white",
-      dot: "text-pink-500",
-      link: "text-pink-600",
-    },
-  },
-  {
-    title: "PAN Card Services",
-    description:
-      "Hassle-free PAN card services for individuals and businesses with quick processing and support.",
-    icon: FileText,
-    services: [
-      "New PAN Card Application",
-      "Correction in Existing PAN",
-      "Lost PAN Card Recovery",
-      "Link PAN with Aadhaar",
-    ],
-    extraCount: 2,
-    accent: {
-      iconBg: "bg-violet-500",
-      iconText: "text-white",
-      dot: "text-violet-500",
-      link: "text-violet-600",
-    },
-  },
-  {
-    title: "Voter Card Services",
-    description:
-      "Get your Voter ID card updated or apply for a new one with our complete assistance.",
-    icon: IdCard,
-    services: [
-      "New Voter Registration",
-      "Correction of Name/Address",
-      "Constituency Transposition",
-      "Digital Voter ID Download",
-    ],
-    extraCount: 2,
-    accent: {
-      iconBg: "bg-emerald-500",
-      iconText: "text-white",
-      dot: "text-emerald-500",
-      link: "text-emerald-600",
-    },
-  },
-  {
-    title: "Birth Certificate",
-    description:
-      "Assistance with Birth Certificate applications and corrections with complete documentation support.",
-    icon: FileCheck,
-    services: [
-      "New Birth Certificate Application",
-      "Delayed Registration Assistance",
-      "Corrections and Updates",
-      "Death Certificate Services",
-    ],
-    extraCount: 2,
-    accent: {
-      iconBg: "bg-amber-500",
-      iconText: "text-white",
-      dot: "text-amber-500",
-      link: "text-amber-600",
-    },
-  },
-];
-
 export default async function HomePage() {
   const content = await getSiteContentMap();
   const ventures = await getVentures();
   const affiliationRows = await getAffiliations();
+  const statRows = await getStats();
+  const quickActionRows = await getQuickActions();
+  const essentialServiceRows = await getEssentialServices();
+  const milestones = await getMilestones();
   const affiliations = affiliationRows.map((a) => ({
     id: a.id,
     name: a.name,
@@ -359,11 +182,11 @@ export default async function HomePage() {
         {/* ============== STATS BAR (inside hero) ============== */}
         <div aria-label="Quick stats" className="relative mx-auto w-full max-w-7xl px-4 pb-10 sm:px-6 lg:pb-10">
           <dl className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-            {STATS.map((stat) => {
-              const Icon = stat.icon;
+            {statRows.map((stat) => {
+              const Icon = HOME_ICONS[stat.icon] ?? HOME_ICONS.Briefcase;
               return (
                 <div
-                  key={stat.label}
+                  key={stat.id}
                   className="flex flex-col items-center rounded-xl border border-stone-200 bg-white px-4 py-6 text-center shadow-sm"
                 >
                   <span className="mb-4 flex size-12 items-center justify-center rounded-full bg-emerald-50 text-emerald-700">
@@ -387,18 +210,16 @@ export default async function HomePage() {
         <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:py-20">
           <div className="mx-auto max-w-2xl text-center">
             <p className="text-sm font-medium uppercase tracking-wide text-gray-500">
-              Our Ventures
+              {content["home.venturesLabel"] ?? "Our Ventures"}
             </p>
             <h2
               id="ventures-heading"
               className="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl"
             >
-              A Family of Institutes &amp; Services
+              {content["home.venturesHeading"] ?? "A Family of Institutes & Services"}
             </h2>
             <p className="mt-4 text-base text-gray-500">
-              From certified computer training to hotel management, tailoring, mobile
-              repair, and essential citizen services — Tongdam Computers serves the
-              community across multiple disciplines.
+              {content["home.venturesSubtitle"] ?? "From certified computer training to hotel management, tailoring, mobile repair, and essential citizen services — Tongdam Computers serves the community across multiple disciplines."}
             </p>
           </div>
 
@@ -489,32 +310,46 @@ export default async function HomePage() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
           <div className="mx-auto max-w-3xl text-center">
             <p className="text-sm font-medium uppercase tracking-wide text-emerald-600">
-              Computer Works
+              {content["home.essentialLabel"] ?? "Computer Works"}
             </p>
             <h2
               id="essential-heading"
               className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl"
             >
-              <span className="text-gray-900">Essential </span>
-              <span className="text-amber-500">Citizen &amp; Digital Services</span>
+              {(() => {
+                const heading = content["home.essentialHeading"] ?? "Essential |Citizen & Digital Services";
+                const parts = heading.split("|");
+                if (parts.length >= 2) {
+                  return (
+                    <>
+                      <span className="text-gray-900">{parts[0]}</span>
+                      <span className="text-amber-500">{parts.slice(1).join("|")}</span>
+                    </>
+                  );
+                }
+                return <span className="text-gray-900">{heading}</span>;
+              })()}
             </h2>
             <p className="mt-4 text-base text-gray-500">
-              Your trusted center for banking services, Aadhaar, PAN, voter ID,
-              birth certificates, DTP &amp; printing — all in one place.
+              {content["home.essentialSubtitle"] ?? "Your trusted center for banking services, Aadhaar, PAN, voter ID, birth certificates, DTP & printing — all in one place."}
             </p>
           </div>
 
           <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {ESSENTIAL_SERVICES.map((s) => {
-              const Icon = s.icon;
+            {essentialServiceRows.map((s) => {
+              const Icon = HOME_ICONS[s.icon] ?? HOME_ICONS.Landmark;
+              const accent = HOME_ACCENTS[s.accent] ?? HOME_ACCENTS.emerald;
+              const services: string[] = (() => {
+                try { const p = JSON.parse(s.services); return Array.isArray(p) ? p : []; } catch { return []; }
+              })();
               return (
                 <div
-                  key={s.title}
+                  key={s.id}
                   className="flex flex-col rounded-lg border border-gray-200 bg-white p-6 shadow-sm transition-shadow hover:shadow-md"
                 >
                   {/* Icon */}
                   <span
-                    className={`mb-4 flex size-12 items-center justify-center rounded-full ${s.accent.iconBg} ${s.accent.iconText}`}
+                    className={`mb-4 flex size-12 items-center justify-center rounded-full ${accent.iconBg} ${accent.iconText}`}
                   >
                     <Icon className="size-6" aria-hidden="true" />
                   </span>
@@ -529,13 +364,13 @@ export default async function HomePage() {
 
                   {/* Services list */}
                   <ul className="mt-4 space-y-2">
-                    {s.services.map((item) => (
+                    {services.map((item) => (
                       <li
                         key={item}
                         className="flex items-center gap-2 text-sm text-gray-600"
                       >
                         <span
-                          className={`size-1.5 shrink-0 rounded-full ${s.accent.iconBg}`}
+                          className={`size-1.5 shrink-0 rounded-full ${accent.iconBg}`}
                           aria-hidden="true"
                         />
                         <span>{item}</span>
@@ -547,7 +382,7 @@ export default async function HomePage() {
                   {s.extraCount > 0 && (
                     <Link
                       href="/services/computer-works"
-                      className={`mt-3 text-sm font-medium hover:underline ${s.accent.link}`}
+                      className={`mt-3 text-sm font-medium hover:underline ${accent.link}`}
                     >
                       +{s.extraCount} more services
                     </Link>
@@ -581,19 +416,19 @@ export default async function HomePage() {
               id="quick-actions-heading"
               className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl"
             >
-              What would you like to do today?
+              {content["home.quickActionsHeading"] ?? "What would you like to do today?"}
             </h2>
             <p className="mt-4 text-base text-muted-foreground">
-              Pick a quick action and we&apos;ll take you straight to the right desk.
+              {content["home.quickActionsSubtitle"] ?? "Pick a quick action and we'll take you straight to the right desk."}
             </p>
           </div>
 
           <div className="mt-12 grid grid-cols-1 gap-5 md:grid-cols-3">
-            {QUICK_ACTIONS.map((action) => {
-              const Icon = action.icon;
+            {quickActionRows.map((action) => {
+              const Icon = HOME_ICONS[action.icon] ?? HOME_ICONS.CalendarCheck;
               return (
                 <Card
-                  key={action.href}
+                  key={action.id}
                   className="group relative flex flex-col overflow-hidden border-emerald-100 bg-white transition-all duration-200 hover:-translate-y-1 hover:border-emerald-300 hover:shadow-lg"
                 >
                   <div className="absolute right-0 top-0 size-24 -translate-y-10 translate-x-10 rounded-full bg-emerald-100/60 blur-2xl transition-transform group-hover:translate-x-6 group-hover:-translate-y-6" />
@@ -643,7 +478,7 @@ export default async function HomePage() {
                 id="story-heading"
                 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl"
               >
-                Built on a customer-first philosophy
+                {content["home.storyHeading"] ?? "Built on a customer-first philosophy"}
               </h2>
               <p className="mt-5 text-base leading-relaxed text-muted-foreground">
                 {story}
@@ -688,8 +523,8 @@ export default async function HomePage() {
                 </div>
 
                 <ol className="relative space-y-5 border-l-2 border-emerald-200 pl-5">
-                  {TIMELINE.map((item) => (
-                    <li key={item.year} className="relative">
+                  {milestones.map((item) => (
+                    <li key={item.id} className="relative">
                       <span
                         className="absolute -left-[27px] top-0.5 flex size-4 items-center justify-center rounded-full border-2 border-emerald-600 bg-white"
                         aria-hidden="true"
@@ -698,7 +533,7 @@ export default async function HomePage() {
                       </span>
                       <div className="flex flex-wrap items-baseline gap-x-2">
                         <span className="text-sm font-bold text-emerald-700">{item.year}</span>
-                        <span className="text-sm font-semibold text-foreground">{item.label}</span>
+                        <span className="text-sm font-semibold text-foreground">{item.title}</span>
                       </div>
                       <p className="mt-0.5 text-xs text-muted-foreground">{item.detail}</p>
                     </li>
@@ -751,11 +586,10 @@ export default async function HomePage() {
                 id="cta-heading"
                 className="text-2xl font-bold tracking-tight sm:text-3xl"
               >
-                Ready to get started? Visit us or call today.
+                {content["home.ctaHeading"] ?? "Ready to get started? Visit us or call today."}
               </h2>
               <p className="mt-3 text-sm leading-relaxed text-emerald-50/90 sm:text-base">
-                Whether you want to enroll in a course, book a table, or apply for an
-                Aadhaar / PAN — our team is here to help.
+                {content["home.ctaDescription"] ?? "Whether you want to enroll in a course, book a table, or apply for an Aadhaar / PAN — our team is here to help."}
               </p>
             </div>
 

@@ -172,6 +172,48 @@ model CoreValue {
 }
 
 // ============================================================
+// HOMEPAGE - Stats, Quick Actions, Essential Services
+// ============================================================
+
+model Stat {
+  id        String   @id @default(cuid())
+  label     String
+  value     String
+  icon      String   @default("Briefcase")
+  sortOrder Int      @default(0)
+  isActive  Boolean  @default(true)
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+}
+
+model QuickAction {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  href        String
+  cta         String
+  icon        String   @default("CalendarCheck")
+  sortOrder   Int      @default(0)
+  isActive    Boolean  @default(true)
+  updatedAt   DateTime @updatedAt
+  createdAt   DateTime @default(now())
+}
+
+model EssentialService {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  icon        String   @default("Landmark")
+  services    String   @default("[]")
+  extraCount  Int      @default(0)
+  accent      String   @default("emerald")
+  sortOrder   Int      @default(0)
+  isActive    Boolean  @default(true)
+  updatedAt   DateTime @updatedAt
+  createdAt   DateTime @default(now())
+}
+
+// ============================================================
 // GALLERY - Images uploaded via UploadThing, shown on /gallery
 // ============================================================
 
