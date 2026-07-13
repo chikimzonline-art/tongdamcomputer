@@ -28,8 +28,10 @@ export const ourFileRouter = {
     image: { maxFileSize: MAX_SIZE, maxFileCount: 10 },
   })
     .input(z.object({ albumId: z.string().nullable().optional() }))
-    // No middleware — the admin route guard is handled at the page level.
-    .onUploadComplete(async ({ file, input }) => {
+    .middleware(async ({ input }) => {
+      return { albumId: input.albumId };
+    })
+    .onUploadComplete(async ({ file, metadata }) => {
       try {
         await db.galleryImage.create({
           data: {
@@ -38,7 +40,7 @@ export const ourFileRouter = {
             name: file.name,
             width: 0,
             height: 0,
-            albumId: input?.albumId || null,
+            albumId: metadata.albumId || null,
           },
         });
       } catch (e) {
