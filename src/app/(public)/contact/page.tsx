@@ -30,8 +30,17 @@ export default async function ContactPage() {
   const address =
     content["contact.address"] ??
     "Tongdam Computers, Main Market Road, Churachandpur, Manipur 795128, India";
+  const workingHours = content["contact.workingHours"] ?? "Mon – Sat · 9:00 AM – 6:00 PM";
+  const workingHoursHint = content["contact.workingHoursHint"] ?? "Closed on Sundays & public holidays";
+  const heroTitle = content["contact.heroTitle"] ?? "Contact Us";
+  const heroSubtitle = content["contact.heroSubtitle"] ?? "Visit our office, call, or send us a query — we're here to help.";
+  const infoHeading = content["contact.infoHeading"] ?? "Get in touch";
+  const infoSubtitle = content["contact.infoSubtitle"] ?? "Call, email, or simply walk in — our team is ready to assist with admissions, services, and queries.";
+  const mapHeading = content["contact.mapHeading"] ?? "On the map";
+  const mapSubtitle = content["contact.mapSubtitle"] ?? "We're located in the heart of Churachandpur, Manipur.";
 
   const mapSrc =
+    content["contact.mapEmbedUrl"] ??
     "https://www.google.com/maps?q=Churachandpur,Manipur,India&output=embed";
 
   const contactCards: ContactCard[] = [
@@ -63,9 +72,9 @@ export default async function ContactPage() {
     },
     {
       label: "Working Hours",
-      value: "Mon – Sat · 9:00 AM – 6:00 PM",
+      value: workingHours,
       icon: Clock,
-      hint: "Closed on Sundays & public holidays",
+      hint: workingHoursHint,
     },
   ];
 
@@ -131,10 +140,10 @@ export default async function ContactPage() {
               id="contact-hero-heading"
               className="text-4xl font-bold tracking-tight drop-shadow-sm sm:text-5xl"
             >
-              Contact Us
+              {heroTitle}
             </h1>
             <p className="mt-5 max-w-2xl text-pretty text-base leading-relaxed text-emerald-50/90 sm:text-lg">
-              Visit our office, call, or send us a query — we&apos;re here to help.
+              {heroSubtitle}
             </p>
           </div>
         </div>
@@ -160,11 +169,10 @@ export default async function ContactPage() {
                 id="contact-info-heading"
                 className="text-3xl font-bold tracking-tight text-foreground"
               >
-                Get in touch
+                {infoHeading}
               </h2>
               <p className="mt-3 text-base text-muted-foreground">
-                Call, email, or simply walk in — our team is ready to assist
-                with admissions, services, and queries.
+                {infoSubtitle}
               </p>
 
               <ul className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -228,10 +236,10 @@ export default async function ContactPage() {
                 Find Us
               </Badge>
               <h2 className="text-3xl font-bold tracking-tight text-foreground">
-                On the map
+                {mapHeading}
               </h2>
               <p className="mt-3 text-base text-muted-foreground">
-                We&apos;re located in the heart of Churachandpur, Manipur.
+                {mapSubtitle}
               </p>
 
               <Card className="mt-8 overflow-hidden border-emerald-100 py-0">

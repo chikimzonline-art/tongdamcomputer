@@ -1,5 +1,6 @@
 import { db } from "@/lib/db";
 import { CoursesEditor, type CourseRow } from "./courses-editor";
+import { TrainingSettings } from "./training-settings";
 
 export const dynamic = "force-dynamic";
 
@@ -34,11 +35,26 @@ export default async function CoursesPage() {
     isActive: r.isActive,
   }));
 
+  // Fetch education content keys (training badges, placement text)
+  const eduRows = await db.siteContent.findMany({ where: { category: "education" } });
+  const eduSettings: Record<string, string> = {};
+  for (const r of eduRows) eduSettings[r.key] = r.value;
+
   return (
-    <CoursesEditor
-      courses={courses}
-      instituteLabels={INSTITUTE_LABELS}
-      instituteOrder={INSTITUTE_ORDER}
-    />
+    <div className="flex flex-col gap-5">
+      <div>
+        <h1 className="text-2xl font-bold text-foreground">Course Management</h1>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Manage courses across all institutes and update training settings.
+          Changes go live instantly.
+        </p>
+      </div>
+      <TrainingSettings settings={eduSettings} />
+      <CoursesEditor
+        courses={courses}
+        instituteLabels={INSTITUTE_LABELS}
+        instituteOrder={INSTITUTE_ORDER}
+      />
+    </div>
   );
 }

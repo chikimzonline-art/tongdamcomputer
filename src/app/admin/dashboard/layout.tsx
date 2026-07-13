@@ -8,7 +8,6 @@ import {
   Cpu,
   LayoutDashboard,
   Inbox,
-  FileEdit,
   GraduationCap,
   Utensils,
   Megaphone,
@@ -22,6 +21,7 @@ import {
   Settings2,
   FileText,
   Home,
+  Phone,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -47,8 +47,8 @@ const NAV_ITEMS: NavItem[] = [
   { href: "/admin/dashboard/affiliations", label: "Affiliations", icon: Handshake },
   { href: "/admin/dashboard/about", label: "About Page", icon: FileText },
   { href: "/admin/dashboard/gallery", label: "Gallery", icon: ImageIcon },
+  { href: "/admin/dashboard/contact", label: "Contact Details", icon: Phone },
   { href: "/admin/dashboard/assets", label: "Site Assets", icon: Settings2 },
-  { href: "/admin/dashboard/cms", label: "Content", icon: FileEdit },
   { href: "/admin/dashboard/courses", label: "Courses", icon: GraduationCap },
   { href: "/admin/dashboard/menu", label: "Menu", icon: Utensils },
   { href: "/admin/dashboard/banners", label: "Banners", icon: Megaphone },
