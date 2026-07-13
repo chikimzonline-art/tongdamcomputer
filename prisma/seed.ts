@@ -280,6 +280,22 @@ export async function seedDatabase() {
     console.log(`✓ Seeded ${services.length} essential services`);
   }
 
+  // 13. Gallery albums
+  const albumCount = await db.galleryAlbum.count();
+  if (albumCount === 0) {
+    const albums = [
+      { name: "Staff", description: "Our team and faculty members", sortOrder: 1 },
+      { name: "Computer Training Center", description: "Students, classes, and activities at the Computer Training Center", sortOrder: 2 },
+      { name: "Hotel Management Institute", description: "Training facilities, kitchen, and placements", sortOrder: 3 },
+      { name: "Tailoring Training Center", description: "Student work and tailoring sessions", sortOrder: 4 },
+      { name: "Events & Functions", description: "Annual functions, graduations, and community events", sortOrder: 5 },
+    ];
+    for (const a of albums) {
+      await db.galleryAlbum.create({ data: a });
+    }
+    console.log(`✓ Seeded ${albums.length} gallery albums`);
+  }
+
   console.log("Seed complete.");
 }
 

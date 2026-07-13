@@ -3,6 +3,7 @@ import {
   type FileRouter,
 } from "uploadthing/next";
 import { UploadThingError } from "uploadthing/server";
+import { z } from "zod";
 import { db } from "@/lib/db";
 
 const f = createUploadthing();
@@ -13,15 +14,12 @@ const MAX_SIZE = "2MB";
  * UploadThing file router for the Tongdam Computers site.
  *
  * Two endpoints:
- *  - `galleryUploader` — for the public gallery page. Each uploaded image is
- *    inserted as a GalleryImage row in the DB (server-side, in
- *    onUploadComplete). No auth required to *initiate* an upload because the
- *    upload button is only rendered inside the admin dashboard, and the actual
- *    admin auth check happens on the admin page itself. (UploadThing also
- *    supports a `getUser` middleware; we keep it simple here.)
+ *  - `galleryUploader` — for the gallery page. Accepts an optional `albumId`
+ *    input so uploaded images can be associated with an album. Each uploaded
+ *    image is inserted as a GalleryImage row in the DB (server-side, in
+ *    onUploadComplete).
  *  - `assetUploader` — for site assets (logo / favicon). The uploaded URL is
- *    returned to the client, which then PUTs it to /api/admin/content so it
- *    persists in SiteContent. We don't write to the DB here.
+ *    returned to the client, which then PUTs it to /api/admin/content.
  *
  * Both enforce a 2MB limit and image-only mime types.
  */
@@ -29,8 +27,9 @@ export const ourFileRouter = {
   galleryUploader: f({
     image: { maxFileSize: MAX_SIZE, maxFileCount: 10 },
   })
+    .input(z.object({ albumId: z.string().nullable().optional() }))
     // No middleware — the admin route guard is handled at the page level.
-    .onUploadComplete(async ({ file }) => {
+    .onUploadComplete(async ({ file, input }) => {
       try {
         await db.galleryImage.create({
           data: {
@@ -39,6 +38,7 @@ export const ourFileRouter = {
             name: file.name,
             width: 0,
             height: 0,
+            albumId: input?.albumId || null,
           },
         });
       } catch (e) {

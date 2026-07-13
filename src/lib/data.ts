@@ -208,3 +208,20 @@ export async function getAllQuickActions() {
 export async function getAllEssentialServices() {
   return db.essentialService.findMany({ orderBy: { sortOrder: "asc" } });
 }
+
+/**
+ * Get all active gallery albums, sorted — used by the public /gallery page.
+ */
+export async function getGalleryAlbums() {
+  return db.galleryAlbum.findMany({
+    where: { isActive: true },
+    orderBy: { sortOrder: "asc" },
+  });
+}
+
+/**
+ * Get ALL gallery albums (including inactive) — for admin.
+ */
+export async function getAllGalleryAlbums() {
+  return db.galleryAlbum.findMany({ orderBy: { sortOrder: "asc" } });
+}

@@ -20,13 +20,13 @@ export async function GET() {
 }
 
 /**
- * PUT /api/admin/gallery  - update a gallery image (caption, alt, active, order)
+ * PUT /api/admin/gallery  - update a gallery image (caption, alt, active, order, albumId)
  */
 export async function PUT(req: NextRequest) {
   if (!(await requireAdmin()))
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const body = await req.json();
-  const { id, caption, alt, sortOrder, isActive } = body;
+  const { id, caption, alt, sortOrder, isActive, albumId } = body;
   if (!id)
     return NextResponse.json({ error: "Missing id" }, { status: 400 });
 
@@ -35,6 +35,8 @@ export async function PUT(req: NextRequest) {
   if (alt !== undefined) data.alt = String(alt);
   if (sortOrder !== undefined) data.sortOrder = Number(sortOrder);
   if (isActive !== undefined) data.isActive = Boolean(isActive);
+  // albumId can be null (move to Uncategorized) or a string (move to album)
+  if (albumId !== undefined) data.albumId = albumId === "" ? null : String(albumId);
 
   const item = await db.galleryImage.update({ where: { id: String(id) }, data });
   return NextResponse.json({ ok: true, item });
