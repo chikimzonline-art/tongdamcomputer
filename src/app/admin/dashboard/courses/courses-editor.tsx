@@ -323,9 +323,25 @@ export function CoursesEditor({
                             <Award className="size-3" />
                             {c.code}
                           </Badge>
-                          <span className="text-xs text-muted-foreground">
-                            Sort #{c.sortOrder}
-                          </span>
+                          <div className="flex items-center gap-1">
+                            <span className="text-xs text-muted-foreground">
+                              Sort #
+                            </span>
+                            <Input
+                              id={`course-sort-${raw.id}`}
+                              type="number"
+                              min={0}
+                              value={c.sortOrder}
+                              onChange={(e) =>
+                                setField(
+                                  raw.id,
+                                  "sortOrder",
+                                  parseInt(e.target.value, 10) || 0
+                                )
+                              }
+                              className="h-6 w-14 px-1.5 text-xs"
+                            />
+                          </div>
                         </div>
                         <div className="flex items-center gap-2">
                           <Label
@@ -381,8 +397,9 @@ export function CoursesEditor({
                               id={`course-fee-${raw.id}`}
                               value={c.fee}
                               onChange={(e) =>
-                                setField(raw.id, "fee", e.target.value)
+                                setField(raw.id, "fee", formatINR(e.target.value))
                               }
+                              placeholder="e.g. ₹5,000"
                             />
                           </div>
                         </div>
@@ -495,6 +512,17 @@ export function CoursesEditor({
   );
 }
 
+/** Formats a raw string input as Indian Rupee currency (e.g. "5000" → "₹5,000") */
+function formatINR(raw: string): string {
+  const digits = raw.replace(/\D/g, "");
+  if (!digits) return "";
+  return new Intl.NumberFormat("en-IN", {
+    style: "currency",
+    currency: "INR",
+    maximumFractionDigits: 0,
+  }).format(parseInt(digits, 10));
+}
+
 /** Inline form for creating a new course within a tab */
 function AddCourseForm({
   institute,
@@ -603,7 +631,7 @@ function AddCourseForm({
             <Input
               id="new-fee"
               value={fee}
-              onChange={(e) => setFee(e.target.value)}
+              onChange={(e) => setFee(formatINR(e.target.value))}
               placeholder="e.g. ₹5,000"
             />
           </div>

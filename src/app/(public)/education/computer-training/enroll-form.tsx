@@ -87,11 +87,15 @@ export function EnrollForm({ courses }: { courses: CourseOption[] }) {
 
   const onSubmit = async (values: EnrollFormValues) => {
     try {
-      const subject = `Course Enrollment: ${values.course}`;
+      const selected = courses.find((c) => c.code === values.course);
+      const courseLabel = selected
+        ? `${selected.title} (${selected.code})`
+        : values.course;
+      const subject = `Course Enrollment: ${courseLabel}`;
       const messageBody =
         values.message && values.message.trim().length > 0
           ? values.message
-          : `I would like to enroll in the "${values.course}" course. Please share the next batch schedule, fee payment details, and documents required.`;
+          : `I would like to enroll in the "${courseLabel}" course. Please share the next batch schedule, fee payment details, and documents required.`;
 
       const res = await fetch("/api/leads", {
         method: "POST",
@@ -255,7 +259,7 @@ export function EnrollForm({ courses }: { courses: CourseOption[] }) {
           </SelectTrigger>
           <SelectContent>
             {courses.map((c) => (
-              <SelectItem key={c.code} value={c.title}>
+              <SelectItem key={c.code} value={c.code}>
                 <span className="font-medium text-emerald-700">[{c.code}]</span>{" "}
                 <span className="text-foreground">{c.title}</span>
               </SelectItem>
