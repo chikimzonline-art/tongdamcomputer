@@ -139,7 +139,7 @@ export function HeroSlider({
         <div className="relative w-full">
           <Carousel setApi={setApi} opts={{ loop: true }} className="w-full">
             <CarouselContent className="ml-0">
-              {slides.map((slide) => {
+              {slides.map((slide, index) => {
                 const BadgeIcon = ICON_MAP[slide.badgeIcon] ?? Sparkles;
                 const CardIcon = ICON_MAP[slide.cardIcon] ?? Quote;
 
@@ -177,9 +177,18 @@ export function HeroSlider({
                           {slide.badge}
                         </Badge>
 
-                        <h1 className="text-balance text-3xl font-bold leading-tight tracking-tight text-emerald-700 md:text-[2.25rem] lg:text-[3.25rem]">
-                          {slide.title}
-                        </h1>
+                        {index === 0 ? (
+                          <h1
+                            id="hero-heading"
+                            className="text-balance text-3xl font-bold leading-tight tracking-tight text-emerald-700 md:text-[2.25rem] lg:text-[3.25rem]"
+                          >
+                            {slide.title}
+                          </h1>
+                        ) : (
+                          <h2 className="text-balance text-3xl font-bold leading-tight tracking-tight text-emerald-700 md:text-[2.25rem] lg:text-[3.25rem]">
+                            {slide.title}
+                          </h2>
+                        )}
 
                         <p className="mt-4 max-w-xl text-pretty text-sm leading-relaxed text-stone-600 md:text-stone-700 md:text-sm lg:text-lg">
                           {slide.subtitle}
