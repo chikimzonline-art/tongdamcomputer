@@ -603,7 +603,7 @@ export function HeroSlidesEditor({ initialSlides }: Props) {
                             toast.success("Image uploaded — click Save to apply.");
                           }
                         }}
-                        onUploadError={(err) => toast.error(err.message)}
+                        onUploadError={(err) => { toast.error(err.message); }}
                         appearance={{
                           button:
                             "data-[state=ready]:bg-stone-700 data-[state=ready]:text-white data-[state=ready]:hover:bg-stone-800 data-[state=uploading]:bg-stone-600/80 data-[state=uploading]:text-white data-[state=uploading]:cursor-not-allowed data-[state=readying]:bg-stone-400 data-[state=readying]:text-white rounded-md px-3 py-1.5 text-xs font-medium transition-colors cursor-pointer",
@@ -807,7 +807,7 @@ export function HeroSlidesEditor({ initialSlides }: Props) {
                   onClientUploadComplete={(res) => {
                     if (res && res.length > 0) setNewSlide((p) => ({ ...p, bgImage: res[0].url }));
                   }}
-                  onUploadError={(err) => toast.error(err.message)}
+                  onUploadError={(err) => { toast.error(err.message); }}
                   appearance={{
                     button:
                       "data-[state=ready]:bg-stone-700 data-[state=ready]:text-white data-[state=ready]:hover:bg-stone-800 data-[state=uploading]:bg-stone-600/80 data-[state=uploading]:text-white data-[state=uploading]:cursor-not-allowed data-[state=readying]:bg-stone-400 rounded-md px-3 py-1.5 text-xs font-medium transition-colors cursor-pointer",
