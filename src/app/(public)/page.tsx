@@ -19,6 +19,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { AffiliationCarousel } from "@/components/site/affiliation-carousel";
+import { HeroSlider } from "@/components/site/hero-slider";
 
 export const revalidate = 60;
 
@@ -66,154 +67,34 @@ export default async function HomePage() {
   return (
     <>
       {/* ============== HERO (contains stats) — header + hero = 100vh on desktop ============== */}
-      <section
-        aria-labelledby="hero-heading"
-        className="relative overflow-hidden border-b border-stone-200 bg-[#f6f3ec] lg:flex lg:min-h-[calc(100svh-4rem)] lg:flex-col lg:justify-center"
+      {/* ============== HERO ============== */}
+      <HeroSlider
+        heroTitle={heroTitle}
+        heroSubtitle={heroSubtitle}
+        founder={founder}
+        foundedYear={foundedYear}
       >
-        {/* Subtle grid pattern */}
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 opacity-60"
-          style={{
-            backgroundImage:
-              "linear-gradient(#e7e5e4 1px, transparent 1px), linear-gradient(90deg, #e7e5e4 1px, transparent 1px)",
-            backgroundSize: "26px 26px",
-            maskImage:
-              "radial-gradient(ellipse at center, rgba(0,0,0,0.7), transparent 75%)",
-            WebkitMaskImage:
-              "radial-gradient(ellipse at center, rgba(0,0,0,0.7), transparent 75%)",
-          }}
-        />
-
-        <div className="relative mx-auto max-w-7xl px-4 pt-12 pb-6 sm:px-6 lg:pt-8 lg:pb-4">
-          <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-12 lg:gap-12">
-            {/* Left column: heading + buttons + mini stats */}
-            <div className="lg:col-span-7">
-              <Badge
-                variant="secondary"
-                className="mb-5 gap-1.5 border-emerald-200 bg-white px-3 py-1 text-xs font-medium text-emerald-700 shadow-sm"
-              >
-                <Sparkles className="size-3.5 text-amber-500" aria-hidden="true" />
-                Established {foundedYear} · Community First
-              </Badge>
-
-              <h1
-                id="hero-heading"
-                className="text-balance text-4xl font-bold leading-tight tracking-tight text-emerald-700 sm:text-5xl lg:text-[3.25rem]"
-              >
-                {heroTitle}
-              </h1>
-
-              <p className="mt-5 max-w-xl text-pretty text-base leading-relaxed text-stone-600 sm:text-lg">
-                {heroSubtitle}
-              </p>
-
-              <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
-                <Button
-                  asChild
-                  size="lg"
-                  className="bg-emerald-700 text-white shadow-sm hover:bg-emerald-800"
-                >
-                  <a href="#departments">
-                    Explore Our Ventures
-                    <ArrowRight className="size-4" aria-hidden="true" />
-                  </a>
-                </Button>
-                <Button
-                  asChild
-                  size="lg"
-                  variant="outline"
-                  className="border-stone-300 bg-white text-stone-700 hover:bg-stone-100 hover:text-stone-900"
-                >
-                  <Link href="/contact">Contact Us</Link>
-                </Button>
-              </div>
-
-              {/* Inline mini-stats */}
-              <div className="mt-10 grid grid-cols-3 gap-4 border-t border-stone-200 pt-6 sm:max-w-md">
-                <div>
-                  <p className="text-2xl font-bold text-emerald-700">Top 1</p>
-                  <p className="text-xs text-stone-500">In India (E-Max)</p>
-                </div>
-                <div>
-                  <p className="text-2xl font-bold text-emerald-700">6+</p>
-                  <p className="text-xs text-stone-500">Ventures</p>
-                </div>
-                <div>
-                  <p className="text-2xl font-bold text-emerald-700">100%</p>
-                  <p className="text-xs text-stone-500">Placement (HM)</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Right column: mission card */}
-            <div className="lg:col-span-5">
-              <div className="relative">
-                {/* Floating top-right placement badge */}
-                <div className="absolute -right-2 -top-3 z-10 flex flex-col items-center rounded-xl bg-amber-500 px-3 py-2 text-center shadow-lg sm:-right-4 sm:-top-4">
-                  <span className="text-lg font-bold leading-none text-white">100%</span>
-                  <span className="text-[10px] font-medium uppercase tracking-wide text-white/90">
-                    Placement
-                  </span>
-                </div>
-
-                <div className="rounded-2xl bg-emerald-700 p-7 text-white shadow-xl sm:p-8">
-                  <p className="text-xs font-semibold uppercase tracking-wider text-emerald-200">
-                    Our Mission
-                  </p>
-                  <Quote className="mt-4 size-7 text-amber-400" aria-hidden="true" />
-                  <p className="mt-3 text-lg font-medium italic leading-relaxed text-emerald-50">
-                    &ldquo;To uplift the local community by providing accessible digital
-                    services, quality skill-based training, and genuine customer care —
-                    all under one trusted roof.&rdquo;
-                  </p>
-
-                  <div className="mt-6 border-t border-emerald-600 pt-5">
-                    <p className="text-xs uppercase tracking-wide text-emerald-200">
-                      Founded by
-                    </p>
-                    <p className="mt-0.5 text-base font-semibold text-white">{founder}</p>
-                    <p className="text-sm text-emerald-200">Established {foundedYear}</p>
-                  </div>
-
-                  <div className="mt-5 flex items-center justify-center gap-2 rounded-lg bg-emerald-800/60 px-4 py-2.5 text-center">
-                    <ShieldCheck
-                      className="size-4 shrink-0 text-amber-400"
-                      aria-hidden="true"
-                    />
-                    <span className="text-xs font-medium leading-tight text-emerald-50">
-                      Govt. Recognised
-                      <br />
-                      E-Max India Affiliated
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
         {/* ============== STATS BAR (inside hero) ============== */}
-        <div aria-label="Quick stats" className="relative mx-auto w-full max-w-7xl px-4 pb-10 sm:px-6 lg:pb-10">
+        <div aria-label="Quick stats" className="relative mx-auto w-full max-w-7xl px-4 pt-8 pb-10 sm:px-6 lg:pt-12 lg:pb-12 z-10">
           <dl className="grid grid-cols-2 gap-4 lg:grid-cols-4">
             {statRows.map((stat) => {
               const Icon = HOME_ICONS[stat.icon] ?? HOME_ICONS.Briefcase;
               return (
                 <div
                   key={stat.id}
-                  className="flex flex-col items-center rounded-xl border border-stone-200 bg-white px-4 py-6 text-center shadow-sm"
+                  className="flex flex-col items-center rounded-xl border border-stone-200 bg-white px-4 py-4 text-center shadow-sm"
                 >
-                  <span className="mb-4 flex size-12 items-center justify-center rounded-full bg-emerald-50 text-emerald-700">
-                    <Icon className="size-6" aria-hidden="true" />
+                  <span className="mb-2.5 flex size-10 items-center justify-center rounded-full bg-emerald-50 text-emerald-700">
+                    <Icon className="size-5" aria-hidden="true" />
                   </span>
-                  <dd className="text-3xl font-bold text-stone-900">{stat.value}</dd>
-                  <dt className="mt-1.5 text-sm text-stone-500">{stat.label}</dt>
+                  <dd className="text-2xl font-bold text-stone-900">{stat.value}</dd>
+                  <dt className="mt-1 text-xs text-stone-500">{stat.label}</dt>
                 </div>
               );
             })}
           </dl>
         </div>
-      </section>
+      </HeroSlider>
 
       {/* ============== OUR VENTURES ============== */}
       <section

@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import {
   Carousel,
   CarouselContent,
@@ -25,6 +26,7 @@ interface HeroSliderProps {
   heroSubtitle: string;
   founder: string;
   foundedYear: string;
+  children?: React.ReactNode;
 }
 
 export function HeroSlider({
@@ -32,6 +34,7 @@ export function HeroSlider({
   heroSubtitle,
   founder,
   foundedYear,
+  children,
 }: HeroSliderProps) {
   const [api, setApi] = React.useState<CarouselApi>();
   const [current, setCurrent] = React.useState(0);
@@ -142,26 +145,39 @@ export function HeroSlider({
   ];
 
   return (
-    <div className="relative w-full">
-      <Carousel setApi={setApi} opts={{ loop: true }} className="w-full">
-        <CarouselContent className="ml-0">
-          {slides.map((slide) => {
-            const BadgeIcon = slide.badgeIcon;
-            const CardIcon = slide.cardIcon;
+    <section
+      aria-labelledby="hero-heading"
+      className="relative w-full border-b border-stone-200 bg-[#f6f3ec] overflow-hidden"
+    >
+      {/* Background Image of the entire Section */}
+      <div className="absolute inset-0 z-0 w-full h-full select-none">
+        {slides.map((slide, index) => (
+          <img
+            key={slide.id}
+            src={slide.bgImage}
+            alt=""
+            className={cn(
+              "absolute inset-0 w-full h-full object-cover object-center transition-opacity duration-1000",
+              index === current ? "opacity-100" : "opacity-0"
+            )}
+          />
+        ))}
+        {/* Unified overlay that covers the entire section */}
+        <div className="absolute inset-0 w-full h-full bg-gradient-to-b from-[#f6f3ec]/85 via-[#f6f3ec]/65 to-[#f6f3ec]/35 md:bg-gradient-to-r md:from-[#f6f3ec] md:via-[#f6f3ec]/60 md:to-[#f6f3ec]/15 z-0" />
+      </div>
 
-            return (
-              <CarouselItem key={slide.id} className="relative pl-0">
-                {/* HERO BODY */}
-                <div className="relative w-full overflow-hidden bg-[#f6f3ec] py-10 md:py-16 lg:py-20 md:flex md:min-h-[520px] lg:min-h-[580px] md:flex-col md:justify-center">
-                  
-                  {/* Background Image of the Slide */}
-                  <img
-                    src={slide.bgImage}
-                    alt={slide.title}
-                    className="pointer-events-none absolute inset-0 w-full h-full object-cover object-center transition-all duration-700 z-0 select-none"
-                  />
-                  {/* Responsive overlay: vertical gradient on mobile, horizontal on tablet/desktop */}
-                  <div className="absolute inset-0 w-full h-full bg-gradient-to-b from-[#f6f3ec]/85 via-[#f6f3ec]/65 to-[#f6f3ec]/35 md:bg-gradient-to-r md:from-[#f6f3ec] md:via-[#f6f3ec]/60 md:to-[#f6f3ec]/15 z-0" />
+      <div className="relative z-10 w-full">
+        <div className="relative w-full">
+          <Carousel setApi={setApi} opts={{ loop: true }} className="w-full">
+            <CarouselContent className="ml-0">
+              {slides.map((slide) => {
+                const BadgeIcon = slide.badgeIcon;
+                const CardIcon = slide.cardIcon;
+
+                return (
+                  <CarouselItem key={slide.id} className="relative pl-0">
+                    {/* HERO BODY */}
+                    <div className="relative w-full overflow-hidden bg-transparent py-10 md:py-16 lg:py-20 md:flex md:min-h-[520px] lg:min-h-[580px] md:flex-col md:justify-center">
 
                   {/* Subtle grid pattern */}
                   <div
@@ -271,29 +287,33 @@ export function HeroSlider({
 
                 </div>
               </CarouselItem>
-            );
-          })}
-        </CarouselContent>
-      </Carousel>
+              );
+            })}
+          </CarouselContent>
+        </Carousel>
 
-      {/* Pagination Dots */}
-      {count > 1 && (
-        <div className="absolute bottom-6 left-1/2 z-20 flex -translate-x-1/2 items-center gap-2">
-          {Array.from({ length: count }).map((_, index) => (
-            <button
-              key={index}
-              onClick={() => handleDotClick(index)}
-              className={`h-2.5 rounded-full transition-all duration-300 ${
-                current === index
-                  ? "w-8 bg-emerald-700"
-                  : "w-2.5 bg-stone-400/60 hover:bg-stone-400"
-              }`}
-              aria-label={`Go to slide ${index + 1}`}
-              aria-current={current === index}
-            />
-          ))}
-        </div>
-      )}
+        {/* Pagination Dots */}
+        {count > 1 && (
+          <div className="absolute bottom-6 left-1/2 z-20 flex -translate-x-1/2 items-center gap-2">
+            {Array.from({ length: count }).map((_, index) => (
+              <button
+                key={index}
+                onClick={() => handleDotClick(index)}
+                className={`h-2.5 rounded-full transition-all duration-300 ${
+                  current === index
+                    ? "w-8 bg-emerald-700"
+                    : "w-2.5 bg-stone-400/60 hover:bg-stone-400"
+                }`}
+                aria-label={`Go to slide ${index + 1}`}
+                aria-current={current === index}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+
+      {children}
     </div>
+  </section>
   );
 }
