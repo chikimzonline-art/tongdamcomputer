@@ -10,6 +10,17 @@ import {
   GraduationCap,
   Building,
   UtensilsCrossed,
+  ChefHat,
+  Scissors,
+  Phone,
+  BookOpen,
+  Award,
+  Trophy,
+  Briefcase,
+  Package,
+  Coffee,
+  Soup,
+  Wrench,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -21,19 +32,52 @@ import {
   type CarouselApi,
 } from "@/components/ui/carousel";
 
+const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
+  Sparkles,
+  ShieldCheck,
+  Quote,
+  GraduationCap,
+  Building,
+  UtensilsCrossed,
+  ChefHat,
+  Scissors,
+  Phone,
+  BookOpen,
+  Award,
+  Trophy,
+  Briefcase,
+  Package,
+  Coffee,
+  Soup,
+  Wrench,
+};
+
+export interface HeroSlide {
+  id: string;
+  badge: string;
+  badgeIcon: string;
+  title: string;
+  subtitle: string;
+  btn1Text: string;
+  btn1Href: string;
+  btn2Text: string;
+  btn2Href: string;
+  bgImage: string;
+  cardTitle: string;
+  cardIcon: string;
+  cardText: string;
+  cardFooterTitle: string;
+  cardFooterSubtitle: string;
+  cardBadge: string;
+}
+
 interface HeroSliderProps {
-  heroTitle: string;
-  heroSubtitle: string;
-  founder: string;
-  foundedYear: string;
+  slides: HeroSlide[];
   children?: React.ReactNode;
 }
 
 export function HeroSlider({
-  heroTitle,
-  heroSubtitle,
-  founder,
-  foundedYear,
+  slides,
   children,
 }: HeroSliderProps) {
   const [api, setApi] = React.useState<CarouselApi>();
@@ -69,81 +113,6 @@ export function HeroSlider({
     [api]
   );
 
-  const slides = [
-    {
-      id: "slide-1",
-      badge: `Established ${foundedYear} · Community First`,
-      badgeIcon: Sparkles,
-      title: heroTitle,
-      subtitle: heroSubtitle,
-      btn1Text: "Explore Our Ventures",
-      btn1Href: "#departments",
-      btn2Text: "Contact Us",
-      btn2Href: "/contact",
-      bgImage: "/institute-hero.png",
-      cardTitle: "Our Mission",
-      cardIcon: Quote,
-      cardText: "To uplift the local community by providing accessible digital services, quality skill-based training, and genuine customer care — all under one trusted roof.",
-      cardFooterTitle: "Founded by",
-      cardFooterSubtitle: founder,
-      cardBadge: "Govt. Recognised · E-Max India Affiliated",
-    },
-    {
-      id: "slide-2",
-      badge: "Govt. Recognized · 100% Placement",
-      badgeIcon: GraduationCap,
-      title: "Shape Your Future with In-Demand Skills",
-      subtitle: "Learn DCA, ADCA, Tally Prime, and Web Development at our top-ranked computer institute. Or master fashion and garments at our tailoring training school.",
-      btn1Text: "Computer Training",
-      btn1Href: "/education/computer-training",
-      btn2Text: "Tailoring Center",
-      btn2Href: "/education/tailoring",
-      bgImage: "/training-hero.png",
-      cardTitle: "Vocational Excellence",
-      cardIcon: GraduationCap,
-      cardText: "Equipping local youth and professionals with accredited certifications to land job roles and secure financial independence.",
-      cardFooterTitle: "Affiliated to",
-      cardFooterSubtitle: "E-Max India (Top 1 nationwide)",
-      cardBadge: "100% Placement Guarantee (Hotel Management)",
-    },
-    {
-      id: "slide-3",
-      badge: "Authorized UCO Bank CSP · Aadhaar Center",
-      badgeIcon: Building,
-      title: "Your Hub for Secure Banking & Public Services",
-      subtitle: "Skip the long queues. Securely deposit cash, execute transfers, apply for Aadhaar cards, updates, PAN cards, Voter IDs, or print digital documents locally.",
-      btn1Text: "Explore Services",
-      btn1Href: "/services/computer-works",
-      btn2Text: "Contact Desk",
-      btn2Href: "/contact",
-      bgImage: "/citizen-hero.png",
-      cardTitle: "Citizen Digital Services",
-      cardIcon: ShieldCheck,
-      cardText: "Bringing critical financial and government services directly to Churachandpur's doorstep with complete security and speed.",
-      cardFooterTitle: "Authorized CSP for",
-      cardFooterSubtitle: "UCO Bank (Government of India)",
-      cardBadge: "Official Aadhaar Enrolment & Updates Station",
-    },
-    {
-      id: "slide-4",
-      badge: "Tongdam Restaurant · Mobile Repair Center",
-      badgeIcon: UtensilsCrossed,
-      title: "Warm Hospitality & Professional Tech Care",
-      subtitle: "Enjoy fresh local and multi-cuisine meals at our family restaurant, or get expert chip-level smartphone repairs using genuine replacement parts.",
-      btn1Text: "Dine with Us",
-      btn1Href: "/lifestyle/restaurant",
-      btn2Text: "Mobile Servicing",
-      btn2Href: "/services/mobile-hub",
-      bgImage: "/restaurant-hero.png",
-      cardTitle: "Lifestyle & Tech Solutions",
-      cardIcon: Sparkles,
-      cardText: "From farm-fresh ingredients on your plate to premium troubleshooting and diagnostics on your phone — quality is our benchmark.",
-      cardFooterTitle: "Located at",
-      cardFooterSubtitle: "Main Market Road, Churachandpur",
-      cardBadge: "Restaurant Dining & Mobile Hardware Training",
-    },
-  ];
-
   return (
     <section
       aria-labelledby="hero-heading"
@@ -171,8 +140,8 @@ export function HeroSlider({
           <Carousel setApi={setApi} opts={{ loop: true }} className="w-full">
             <CarouselContent className="ml-0">
               {slides.map((slide) => {
-                const BadgeIcon = slide.badgeIcon;
-                const CardIcon = slide.cardIcon;
+                const BadgeIcon = ICON_MAP[slide.badgeIcon] ?? Sparkles;
+                const CardIcon = ICON_MAP[slide.cardIcon] ?? Quote;
 
                 return (
                   <CarouselItem key={slide.id} className="relative pl-0">
