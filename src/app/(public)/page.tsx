@@ -11,14 +11,21 @@ import {
   Mail,
   Check,
   Computer,
+  GraduationCap,
+  UtensilsCrossed,
+  Building,
+  ChefHat,
+  Scissors,
+  Wrench,
 } from "lucide-react";
-import { getSiteContentMap, getVentures, getAffiliations, getStats, getQuickActions, getEssentialServices, getMilestones } from "@/lib/data";
+import { getSiteContentMap, getVentures, getAffiliations, getStats, getQuickActions, getEssentialServices, getMilestones, getHeroSlides } from "@/lib/data";
 import { VENTURE_ICONS, VENTURE_ACCENTS, DEFAULT_ACCENT } from "@/lib/venture-config";
 import { HOME_ICONS, HOME_ACCENTS } from "@/lib/home-config";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { AffiliationCarousel } from "@/components/site/affiliation-carousel";
+import { HeroSlider } from "@/components/site/hero-slider";
 
 export const revalidate = 60;
 
@@ -32,6 +39,7 @@ export default async function HomePage() {
     quickActionRows,
     essentialServiceRows,
     milestones,
+    dbHeroSlides,
   ] = await Promise.all([
     getSiteContentMap(),
     getVentures(),
@@ -40,6 +48,7 @@ export default async function HomePage() {
     getQuickActions(),
     getEssentialServices(),
     getMilestones(),
+    getHeroSlides(),
   ]);
   const affiliations = affiliationRows.map((a) => ({
     id: a.id,
@@ -63,157 +72,169 @@ export default async function HomePage() {
     content["training.emaxBadge"] ?? "Affiliated to E-Max India | Recognized by Govt. of India";
   const topRank = content["training.topRank"] ?? "Top 1 Institute under E-Max India nationwide";
 
+  // Default slides — used when the admin has not yet seeded the DB table.
+  const defaultSlides = [
+    {
+      id: "slide-1",
+      badge: `Established ${foundedYear} · Community First`,
+      badgeIcon: "Sparkles",
+      title: heroTitle,
+      subtitle: heroSubtitle,
+      btn1Text: "Explore Our Ventures",
+      btn1Href: "#departments",
+      btn2Text: "Contact Us",
+      btn2Href: "/contact",
+      bgImage: "/institute-hero.png",
+      cardTitle: "Our Mission",
+      cardIcon: "Quote",
+      cardText: "To uplift the local community by providing accessible digital services, quality skill-based training, and genuine customer care — all under one trusted roof.",
+      cardFooterTitle: "Founded by",
+      cardFooterSubtitle: founder,
+      cardBadge: "Govt. Recognised · E-Max India Affiliated",
+    },
+    {
+      id: "slide-2",
+      badge: "Govt. Recognized · 100% Placement",
+      badgeIcon: "GraduationCap",
+      title: "Master In-Demand IT & Coding Skills",
+      subtitle: "Join Churachandpur's premier computer training institute. Learn DCA, ADCA, Tally Prime, Python, and Web Development from experienced faculty.",
+      btn1Text: "Explore Courses",
+      btn1Href: "/education/computer-training",
+      btn2Text: "Apply Now",
+      btn2Href: "/education/computer-training#enroll",
+      bgImage: "/training-hero.png",
+      cardTitle: "Vocational Excellence",
+      cardIcon: "GraduationCap",
+      cardText: "Equipping local youth and professionals with accredited certifications to land job roles and secure financial independence.",
+      cardFooterTitle: "Affiliated to",
+      cardFooterSubtitle: "E-Max India (Top 1 nationwide)",
+      cardBadge: "Official Computer Training & Certification Hub",
+    },
+    {
+      id: "slide-3",
+      badge: "Hospitality Industry · 100% Placement",
+      badgeIcon: "ChefHat",
+      title: "Launch a Global Hospitality Career",
+      subtitle: "Gain professional hands-on diplomas in Food Production, F&B Service, and Hotel Operations. Fully-equipped training kitchen & placement network.",
+      btn1Text: "Hospitality Program",
+      btn1Href: "/education/hotel-management",
+      btn2Text: "Enroll Today",
+      btn2Href: "/education/hotel-management#enroll",
+      bgImage: "/restaurant-hero.png",
+      cardTitle: "Global Opportunities",
+      cardIcon: "ChefHat",
+      cardText: "A complete practical syllabus ensuring you are 100% ready for leading 5-star luxury hotels, resorts, and cruise liners.",
+      cardFooterTitle: "Track Record",
+      cardFooterSubtitle: "100% Practical & Placement Assist",
+      cardBadge: "Simulated Kitchen, Housekeeping, & Bar Training",
+    },
+    {
+      id: "slide-4",
+      badge: "Creative Fashion · Accredited Programs",
+      badgeIcon: "Scissors",
+      title: "Express Your Style & Fashion Creativity",
+      subtitle: "Master dressmaking, cutting, and premium embroidery at our dedicated tailoring training school. Complete custom garments from your very first week.",
+      btn1Text: "Tailoring Center",
+      btn1Href: "/education/tailoring",
+      btn2Text: "Get Details",
+      btn2Href: "/education/tailoring#courses",
+      bgImage: "/training-hero.png",
+      cardTitle: "Creative Skillsets",
+      cardIcon: "Scissors",
+      cardText: "Providing hands-on fashion training with all practice fabrics and sewing machines supplied in class—zero hidden costs.",
+      cardFooterTitle: "Outcome Focused",
+      cardFooterSubtitle: "Self-Employment & Boutique Ready",
+      cardBadge: "Accredited Sewing & Fashion Designing Certificate",
+    },
+    {
+      id: "slide-5",
+      badge: "Authorized UCO Bank CSP · Aadhaar Center",
+      badgeIcon: "Building",
+      title: "Your Hub for Secure Banking & Public Services",
+      subtitle: "Skip the long queues. Securely deposit cash, execute transfers, apply for Aadhaar cards, updates, PAN cards, Voter IDs, or print digital documents locally.",
+      btn1Text: "Explore Services",
+      btn1Href: "/services/computer-works",
+      btn2Text: "Contact Desk",
+      btn2Href: "/contact",
+      bgImage: "/citizen-hero.png",
+      cardTitle: "Citizen Digital Services",
+      cardIcon: "ShieldCheck",
+      cardText: "Bringing critical financial and government services directly to Churachandpur's doorstep with complete security and speed.",
+      cardFooterTitle: "Authorized CSP for",
+      cardFooterSubtitle: "UCO Bank (Government of India)",
+      cardBadge: "Official Aadhaar Enrolment & Updates Station",
+    },
+    {
+      id: "slide-6",
+      badge: "Tongdam Restaurant · Fine Dining",
+      badgeIcon: "UtensilsCrossed",
+      title: "Warm Hospitality & Cozy Fine Dining",
+      subtitle: "Dine with family and friends. Savor fresh local delicacies and multi-cuisine favorites prepared by our expert chefs in a premium ambient space.",
+      btn1Text: "Dine with Us",
+      btn1Href: "/lifestyle/restaurant",
+      btn2Text: "Table Bookings",
+      btn2Href: "/lifestyle/restaurant#reserve",
+      bgImage: "/restaurant-hero.png",
+      cardTitle: "Local & Multi-Cuisine",
+      cardIcon: "UtensilsCrossed",
+      cardText: "From family gatherings to quiet dinners, we guarantee high hygiene standards, rich flavors, and a beautiful dining experience.",
+      cardFooterTitle: "Restaurant Hours",
+      cardFooterSubtitle: "Open Daily: 9:00 AM - 9:00 PM",
+      cardBadge: "Dine-in, Takeaway, and Group Gathering Venue",
+    },
+    {
+      id: "slide-7",
+      badge: "Mobile Hub · Expert Repair Center",
+      badgeIcon: "Phone",
+      title: "Expert Smartphone Repairs & Tech Care",
+      subtitle: "Get professional chip-level repairs using high-quality parts for all Android and iOS smartphones. Or join our hands-on mobile hardware repair training.",
+      btn1Text: "Mobile Servicing",
+      btn1Href: "/services/mobile-hub",
+      btn2Text: "Contact Techs",
+      btn2Href: "/contact",
+      bgImage: "/citizen-hero.png",
+      cardTitle: "Tech Solutions",
+      cardIcon: "Wrench",
+      cardText: "Premium hardware troubleshooting, glass replacements, and software formatting under expert guidance and tools.",
+      cardFooterTitle: "Hardware Training",
+      cardFooterSubtitle: "Practical Mobile Repairing Course",
+      cardBadge: "Certified Phone Diagnostics & Servicing Lab",
+    },
+  ];
+
+  // Use DB slides if the admin has saved any; otherwise fall back to defaults.
+  const heroSlides = dbHeroSlides.length > 0
+    ? dbHeroSlides.map((s) => ({ ...s }))
+    : defaultSlides;
+
   return (
     <>
       {/* ============== HERO (contains stats) — header + hero = 100vh on desktop ============== */}
-      <section
-        aria-labelledby="hero-heading"
-        className="relative overflow-hidden border-b border-stone-200 bg-[#f6f3ec] lg:flex lg:min-h-[calc(100svh-4rem)] lg:flex-col lg:justify-center"
+      {/* ============== HERO ============== */}
+      <HeroSlider
+        slides={heroSlides}
       >
-        {/* Subtle grid pattern */}
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 opacity-60"
-          style={{
-            backgroundImage:
-              "linear-gradient(#e7e5e4 1px, transparent 1px), linear-gradient(90deg, #e7e5e4 1px, transparent 1px)",
-            backgroundSize: "26px 26px",
-            maskImage:
-              "radial-gradient(ellipse at center, rgba(0,0,0,0.7), transparent 75%)",
-            WebkitMaskImage:
-              "radial-gradient(ellipse at center, rgba(0,0,0,0.7), transparent 75%)",
-          }}
-        />
-
-        <div className="relative mx-auto max-w-7xl px-4 pt-12 pb-6 sm:px-6 lg:pt-8 lg:pb-4">
-          <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-12 lg:gap-12">
-            {/* Left column: heading + buttons + mini stats */}
-            <div className="lg:col-span-7">
-              <Badge
-                variant="secondary"
-                className="mb-5 gap-1.5 border-emerald-200 bg-white px-3 py-1 text-xs font-medium text-emerald-700 shadow-sm"
-              >
-                <Sparkles className="size-3.5 text-amber-500" aria-hidden="true" />
-                Established {foundedYear} · Community First
-              </Badge>
-
-              <h1
-                id="hero-heading"
-                className="text-balance text-4xl font-bold leading-tight tracking-tight text-emerald-700 sm:text-5xl lg:text-[3.25rem]"
-              >
-                {heroTitle}
-              </h1>
-
-              <p className="mt-5 max-w-xl text-pretty text-base leading-relaxed text-stone-600 sm:text-lg">
-                {heroSubtitle}
-              </p>
-
-              <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
-                <Button
-                  asChild
-                  size="lg"
-                  className="bg-emerald-700 text-white shadow-sm hover:bg-emerald-800"
-                >
-                  <a href="#departments">
-                    Explore Our Ventures
-                    <ArrowRight className="size-4" aria-hidden="true" />
-                  </a>
-                </Button>
-                <Button
-                  asChild
-                  size="lg"
-                  variant="outline"
-                  className="border-stone-300 bg-white text-stone-700 hover:bg-stone-100 hover:text-stone-900"
-                >
-                  <Link href="/contact">Contact Us</Link>
-                </Button>
-              </div>
-
-              {/* Inline mini-stats */}
-              <div className="mt-10 grid grid-cols-3 gap-4 border-t border-stone-200 pt-6 sm:max-w-md">
-                <div>
-                  <p className="text-2xl font-bold text-emerald-700">Top 1</p>
-                  <p className="text-xs text-stone-500">In India (E-Max)</p>
-                </div>
-                <div>
-                  <p className="text-2xl font-bold text-emerald-700">6+</p>
-                  <p className="text-xs text-stone-500">Ventures</p>
-                </div>
-                <div>
-                  <p className="text-2xl font-bold text-emerald-700">100%</p>
-                  <p className="text-xs text-stone-500">Placement (HM)</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Right column: mission card */}
-            <div className="lg:col-span-5">
-              <div className="relative">
-                {/* Floating top-right placement badge */}
-                <div className="absolute -right-2 -top-3 z-10 flex flex-col items-center rounded-xl bg-amber-500 px-3 py-2 text-center shadow-lg sm:-right-4 sm:-top-4">
-                  <span className="text-lg font-bold leading-none text-white">100%</span>
-                  <span className="text-[10px] font-medium uppercase tracking-wide text-white/90">
-                    Placement
-                  </span>
-                </div>
-
-                <div className="rounded-2xl bg-emerald-700 p-7 text-white shadow-xl sm:p-8">
-                  <p className="text-xs font-semibold uppercase tracking-wider text-emerald-200">
-                    Our Mission
-                  </p>
-                  <Quote className="mt-4 size-7 text-amber-400" aria-hidden="true" />
-                  <p className="mt-3 text-lg font-medium italic leading-relaxed text-emerald-50">
-                    &ldquo;To uplift the local community by providing accessible digital
-                    services, quality skill-based training, and genuine customer care —
-                    all under one trusted roof.&rdquo;
-                  </p>
-
-                  <div className="mt-6 border-t border-emerald-600 pt-5">
-                    <p className="text-xs uppercase tracking-wide text-emerald-200">
-                      Founded by
-                    </p>
-                    <p className="mt-0.5 text-base font-semibold text-white">{founder}</p>
-                    <p className="text-sm text-emerald-200">Established {foundedYear}</p>
-                  </div>
-
-                  <div className="mt-5 flex items-center justify-center gap-2 rounded-lg bg-emerald-800/60 px-4 py-2.5 text-center">
-                    <ShieldCheck
-                      className="size-4 shrink-0 text-amber-400"
-                      aria-hidden="true"
-                    />
-                    <span className="text-xs font-medium leading-tight text-emerald-50">
-                      Govt. Recognised
-                      <br />
-                      E-Max India Affiliated
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
         {/* ============== STATS BAR (inside hero) ============== */}
-        <div aria-label="Quick stats" className="relative mx-auto w-full max-w-7xl px-4 pb-10 sm:px-6 lg:pb-10">
+        <div aria-label="Quick stats" className="relative mx-auto w-full max-w-7xl px-4 pt-8 pb-10 sm:px-6 lg:pt-12 lg:pb-12 z-10">
           <dl className="grid grid-cols-2 gap-4 lg:grid-cols-4">
             {statRows.map((stat) => {
               const Icon = HOME_ICONS[stat.icon] ?? HOME_ICONS.Briefcase;
               return (
                 <div
                   key={stat.id}
-                  className="flex flex-col items-center rounded-xl border border-stone-200 bg-white px-4 py-6 text-center shadow-sm"
+                  className="flex flex-col items-center rounded-xl border border-stone-200 bg-white px-4 py-4 text-center shadow-sm"
                 >
-                  <span className="mb-4 flex size-12 items-center justify-center rounded-full bg-emerald-50 text-emerald-700">
-                    <Icon className="size-6" aria-hidden="true" />
+                  <span className="mb-2.5 flex size-10 items-center justify-center rounded-full bg-emerald-50 text-emerald-700">
+                    <Icon className="size-5" aria-hidden="true" />
                   </span>
-                  <dd className="text-3xl font-bold text-stone-900">{stat.value}</dd>
-                  <dt className="mt-1.5 text-sm text-stone-500">{stat.label}</dt>
+                  <dd className="text-2xl font-bold text-stone-900">{stat.value}</dd>
+                  <dt className="mt-1 text-xs text-stone-500">{stat.label}</dt>
                 </div>
               );
             })}
           </dl>
         </div>
-      </section>
+      </HeroSlider>
 
       {/* ============== OUR VENTURES ============== */}
       <section

@@ -228,3 +228,21 @@ export async function getGalleryAlbums() {
 export async function getAllGalleryAlbums() {
   return db.galleryAlbum.findMany({ orderBy: { sortOrder: "asc" } });
 }
+
+/**
+ * Get active hero slides for the public homepage, ordered by sortOrder.
+ * Returns empty array if none exist (page falls back to hardcoded defaults).
+ */
+export const getHeroSlides = cache(async () => {
+  return db.heroSlide.findMany({
+    where: { isActive: true },
+    orderBy: { sortOrder: "asc" },
+  });
+});
+
+/**
+ * Get ALL hero slides (including inactive) — for admin.
+ */
+export async function getAllHeroSlides() {
+  return db.heroSlide.findMany({ orderBy: { sortOrder: "asc" } });
+}

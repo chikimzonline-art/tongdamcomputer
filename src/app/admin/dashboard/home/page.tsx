@@ -1,6 +1,7 @@
 import { db } from "@/lib/db";
-import { getAllStats, getAllQuickActions, getAllEssentialServices } from "@/lib/data";
+import { getAllStats, getAllQuickActions, getAllEssentialServices, getAllHeroSlides } from "@/lib/data";
 import { HomeEditor } from "./home-editor";
+import { HeroSlidesEditor } from "./hero-slides-editor";
 
 export const dynamic = "force-dynamic";
 
@@ -12,16 +13,22 @@ export default async function HomeAdminPage() {
   const stats = await getAllStats();
   const quickActions = await getAllQuickActions();
   const essentialServices = await getAllEssentialServices();
+  const heroSlides = await getAllHeroSlides();
 
   return (
-    <div>
-      <h1 className="text-2xl font-bold text-foreground">Home Page</h1>
-      <p className="mt-1 text-sm text-muted-foreground">
-        Edit all content shown on the homepage — hero text, stats, section
-        headings, quick actions, and essential services. Changes go live
-        instantly.
-      </p>
-      <div className="mt-6">
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-2xl font-bold text-foreground">Home Page</h1>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Edit all content shown on the homepage — hero slider, text content, stats, section
+          headings, quick actions, and essential services. Changes go live
+          instantly.
+        </p>
+      </div>
+
+      <HeroSlidesEditor initialSlides={heroSlides} />
+
+      <div>
         <HomeEditor
           content={content}
           stats={stats.map((s) => ({ id: s.id, label: s.label, value: s.value, icon: s.icon, sortOrder: s.sortOrder, isActive: s.isActive }))}
@@ -42,3 +49,4 @@ export default async function HomeAdminPage() {
     </div>
   );
 }
+

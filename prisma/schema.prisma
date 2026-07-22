@@ -250,3 +250,31 @@ model GalleryAlbum {
   updatedAt   DateTime @updatedAt
   createdAt   DateTime @default(now())
 }
+
+// ============================================================
+// HERO SLIDES — Editable homepage hero carousel
+// ============================================================
+
+model HeroSlide {
+  id                 String   @id @default(cuid())
+  badge              String
+  badgeIcon          String   @default("Sparkles")
+  title              String
+  subtitle           String
+  btn1Text           String
+  btn1Href           String
+  btn2Text           String
+  btn2Href           String
+  bgImage            String   @default("")
+  cardTitle          String
+  cardIcon           String   @default("Quote")
+  cardText           String
+  cardFooterTitle    String
+  cardFooterSubtitle String
+  cardBadge          String
+  sortOrder          Int      @default(0)
+  isActive           Boolean  @default(true)
+  updatedAt          DateTime @updatedAt
+  createdAt          DateTime @default(now())
+}
+
